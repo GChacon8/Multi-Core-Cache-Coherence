@@ -8,10 +8,7 @@ class PE {
 private:
     // Atributos
     int id;
-    bitset<64> reg0 = 0;
-    bitset<64> reg1 = 0;
-    bitset<64> reg2 = 0;
-    bitset<64> reg3 = 0;
+    u_int64_t reg[4];
     Cache cache;
     Rom rom;
 
@@ -26,36 +23,20 @@ public:
         return id;
     }
 
-    bitset<64> get_reg0() {
-        return reg0;
+    u_int64_t get_reg(int reg_num) {
+        return reg[reg_num];
     }
 
-    bitset<64> get_reg1() {
-        return reg1;
+    void set_reg(int reg_num, u_int64_t value) {
+        reg[reg_num] = value;
     }
 
-    bitset<64> get_reg2() {
-        return reg2;
+    void INC(int reg_num){
+        reg[reg_num] = reg[reg_num] + 1;
     }
 
-    bitset<64> get_reg3() {
-        return reg3;
-    }
-
-    void set_reg0(bitset<64> value) {
-        reg0 = value;
-    }
-
-    void set_reg1(bitset<64> value) {
-        reg1 = value;
-    }
-
-    void set_reg2(bitset<64> value) {
-        reg2 = value;
-    }
-
-    void set_reg3(bitset<64> value) {
-        reg3 = value;
+    void DEC(int reg_num){
+        reg[reg_num] = reg[reg_num] - 1;
     }
 
 };

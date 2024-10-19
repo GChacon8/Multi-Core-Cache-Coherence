@@ -6,17 +6,22 @@ class Cache {
 private:
     // Atributos
     int id;
-    bitset<256> mem[8];
+    
+    u_int64_t data[4][8];
+    u_int8_t addr[4][8];
+    bitset<2> state[4][8];
+    u_int8_t miss_count[4][8];
+    u_int8_t inv_count[4][8];
 
 public:
     
     // Métodos para obtener los atributos
-    bitset<256> get_block(int block_num) {
-        return mem[block_num];
+    u_int64_t get_data(int block_num, int pos) {
+        return data[pos][block_num];
     }
 
-    void set_block(int block_num, bitset<256> block) {
-        mem[block_num] = block;
+    void set_data(int block_num, int pos, u_int64_t value) {
+        data[pos][block_num] = value;
     }
 
 };
