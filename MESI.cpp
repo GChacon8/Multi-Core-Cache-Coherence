@@ -40,9 +40,9 @@ public:
         switch (state) {
             case INVALID:
                 if (event == READ_MISS) {
-                    state = SHARED;
+                    state = SHARED; // Transición a SHARED después de un READ_MISS
                 } else if (event == WRITE_MISS) {
-                    state = MODIFIED;
+                    state = MODIFIED;   // Transición a MODIFIED para un WRITE_MISS
                 }
                 break;
 
@@ -50,9 +50,9 @@ public:
                 if (event == READ_HIT) {
                     // Estado permanece SHARED
                 } else if (event == WRITE_HIT) {
-                    state = MODIFIED;
+                    state = MODIFIED;   // Escritura exclusiva, cambio a MODIFIED
                 } else if (event == INVALIDATE) {
-                    state = INVALID;
+                    state = INVALID;    // Invalidación por otra caché
                 }
                 break;
 
@@ -60,15 +60,19 @@ public:
                 if (event == READ_HIT) {
                     // Estado permanece EXCLUSIVE
                 } else if (event == WRITE_HIT) {
-                    state = MODIFIED;
+                    state = MODIFIED;   // Escritura, cambio a MODIFIED
                 } else if (event == INVALIDATE) {
-                    state = INVALID;
+                    state = INVALID;    // Invalidación externa
+                } else if (event == READ_MISS) {
+                    state = SHARED;     // Cambio a SHARED si otra caché lee
                 }
                 break;
 
             case MODIFIED:
                 if (event == INVALIDATE) {
-                    state = INVALID;
+                    state = INVALID;    // Invalidación externa
+                } else if (event == READ_MISS) {
+                    state = SHARED;     // Cambio a SHARED después de un READ_MISS
                 }
                 break;
         }
