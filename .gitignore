@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+.idea/.name
+.idea/misc.xml
+.idea/modules.xml
+.idea/Multi-Core-Cache-Coherence.iml
+.idea/vcs.xml
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json
+cmake-build-debug/.cmake/api/v1/query/cache-v2
+cmake-build-debug/.cmake/api/v1/query/cmakeFiles-v1
+cmake-build-debug/.cmake/api/v1/query/codemodel-v2
