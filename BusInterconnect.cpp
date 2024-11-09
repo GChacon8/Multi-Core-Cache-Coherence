@@ -1,80 +1,55 @@
 #include "BusInterconnect.h"
 
-BusInterconnect::BusInterconnect(Ram& sharedMem, int numPEs)
+BusInterconnect::BusInterconnect(Ram& sharedMem, vector<Cache*>& caches)
 	: sharedMemory(sharedMem),
-	dataTransmitted(numPEs, 0),
+	caches(caches),
 	numInvalidations(0),
 	numReadRequests(0),
 	numReadResponses(0),
 	numWriteRequests(0),
 	numWriteResponses(0) {}
 
-uint64_t BusInterconnect::readRequest(int pe_id, int addr)
+uint64_t BusInterconnect::readRequest(Cache& cache, int addr)
 {
 	lock_guard<mutex> lock(bus_mutex);
 	numReadRequests++;
-	uint64_t data = sharedMemory.read_mem(addr);
-	numReadResponses++;
-	dataTransmitted[pe_id] += sizeof(data);
 
-	return data;
+	int blockIndex = addr / cache.getBlockSize(); // Se necesita obtener el tamano del bloque
+	MESIState currentState = getCurrentMESIState(blockIndex);
+
+	if (currentState == INVALID)
+	{
+		assignMESIState(cache, blockIndex, SHARED); // Camiba a S si estaba en I
+		return sharedMemory.read_mem(addr);
+	}
+	numReadResponses++;
+	return cache.get_data(blockIndex, addr);
 }
 
-void BusInterconnect::writeRequest(int pe_id, int addr, uint64_t data)
+void BusInterconnect::writeRequest(Cache& cache, int addr, uint64_t data)
 {
 	lock_guard<mutex> lock(bus_mutex);
 	numWriteRequests++;
-	sharedMemory.write_mem(addr, data);
-	numWriteResponses++;
-	dataTransmitted[pe_id] += sizeof(data);
-}
 
-void BusInterconnect::assignMESIState(int pe_id, int blockIndex, MESIState newState)
-{
-	// Obtener el estado del cache y guardaro en currentCache
-	MESIState currentState; // Cambiar a MESIState currentState = cache.getState(blockindex); o algo asi
+	int blockIndex = addr / cache.getBlockSize(); // Se necesita obtener el tamano del bloque
+	MESIState currentState = getCurrentMESIState(blockIndex);
 
-	switch (newState)
+	if (currentState == SHARED || currentState == INVALID)
 	{
-	case MODIFIED:
-		if (currentState == SHARED || currentState == EXCLUSIVE)
-		{
-			// Invalidar otras caches que no sean pe_id
-			// Cambiar el estado a modified de ese bloque
-			numInvalidations++;
-		}
-		break;
-
-	case EXCLUSIVE:
-		if (currentState == INVALID)
-		{
-			// Cambiar el estado a E
-		}
-		break;
-
-	case SHARED:
-		if (currentState == EXCLUSIVE)
-		{
-			// Cambiar estado a S
-		}
-		break;
-	case INVALID:
-		// Se mantiene en I
-		break;
-	default:
-		break;
+		invalidateOtherCaches(cache, blockIndex); // Invalidar las otras cache según el bloque
+		assignMESIState(cache, blockIndex, MODIFIED); // Cambiar a M
 	}
+	numWriteResponses++;
+	cache.write(addr, data);
 }
 
-void BusInterconnect::registerInvalidation(int pe_id, int regIndex)
+void BusInterconnect::assignMESIState(Cache& cache, int blockIndex, MESIState newState)
 {
-	/*
-	* Invalidar las otras caches aqui
-	* algo como
-	* para cada PE:
-	*	si  PE.id != pe_id
-	*		PE.setState(pe_id, regIndex, Invalid)
-	*/
+	cache.setState(blockIndex, newState); // Se necesita fijar el nuevo state
+	if (newState == INVALID)
+	{
+		numInvalidations++;
+	}
 }
 
 int BusInterconnect::getNumInvalidations() const { return numInvalidations; }
@@ -87,4 +62,26 @@ int BusInterconnect::getNumWriteRequests() const { return numWriteRequests; }
 
 int BusInterconnect::getNumWriteResponses() const{ return numWriteResponses; }
 
-uint64_t BusInterconnect::getDataTransmitted(int peId) const { return dataTransmitted[peId]; }
+void BusInterconnect::invalidateOtherCaches(Cache &requestingCache, int blockIndex)
+{
+	for (Cache* cache : caches)
+	{
+		if (cache != &requestingCache && cache->getState(blockIndex) != INVALID) // Obtener el state
+		{
+			cache->setState(blockIndex, INVALID); // Fijar el state
+			numInvalidations++;
+		}
+	}
+}
+
+MESIState BusInterconnect::getCurrentMESIState(int blockIndex)
+{
+    for (Cache* cache : caches)
+	{
+		if(cache->getState(blockIndex) != INVALID)	// Obtener el STATE
+		{
+			return cache->getState(blockIndex);		// Obtener el STATE
+		}
+	}
+	return INVALID;	
+}
