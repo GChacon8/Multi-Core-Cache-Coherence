@@ -6,13 +6,13 @@
 #include <mutex>
 #include <atomic>
 #include <cstdint>
-#include "SharedMemory.h"
+#include "RAM.cpp"
 // #include "Cache.h"
-// Asumo que asi se llama la libreria, también puede ser que esté anidada dentro de los PEs
+// Asumo que asi se llama la libreria, tambiï¿½n puede ser que estï¿½ anidada dentro de los PEs
 
 using namespace std;
 
-class SharedMemory;
+class Ram;
 
 // class Cache;
 
@@ -25,7 +25,7 @@ enum MESIState {
 
 class BusInterconnect {
 public:
-	BusInterconnect(SharedMemory& sharedMem, int numPEs);
+	BusInterconnect(Ram& sharedMem, int numPEs);
 
 	uint64_t readRequest(int pe_id, int addr);
 	void writeRequest(int pe_id, int addr, uint64_t data);
@@ -44,7 +44,7 @@ public:
 	uint64_t getDataTransmitted(int peId) const;
 
 private:
-	SharedMemory& sharedMemory;
+	Ram& sharedMemory;
 	vector<uint64_t> dataTransmitted;
 	mutex bus_mutex;
 

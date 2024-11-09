@@ -1,6 +1,6 @@
 #include "BusInterconnect.h"
 
-BusInterconnect::BusInterconnect(SharedMemory& sharedMem, int numPEs)
+BusInterconnect::BusInterconnect(Ram& sharedMem, int numPEs)
 	: sharedMemory(sharedMem),
 	dataTransmitted(numPEs, 0),
 	numInvalidations(0),
@@ -13,7 +13,7 @@ uint64_t BusInterconnect::readRequest(int pe_id, int addr)
 {
 	lock_guard<mutex> lock(bus_mutex);
 	numReadRequests++;
-	uint64_t data = sharedMemory.read(addr);
+	uint64_t data = sharedMemory.read_mem(addr);
 	numReadResponses++;
 	dataTransmitted[pe_id] += sizeof(data);
 
@@ -24,7 +24,7 @@ void BusInterconnect::writeRequest(int pe_id, int addr, uint64_t data)
 {
 	lock_guard<mutex> lock(bus_mutex);
 	numWriteRequests++;
-	sharedMemory.write(addr, data);
+	sharedMemory.write_mem(addr, data);
 	numWriteResponses++;
 	dataTransmitted[pe_id] += sizeof(data);
 }
