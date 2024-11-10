@@ -129,6 +129,7 @@ public:
                     valid[i][j] = true;
                     miss_count++;
                     fifo_queue.push({i, j});
+                    cout << "Cache miss(Cache " << id << "): dato guardado en [" << i << "][" << j << "].\n";
                     return data[i][j];
                 }
             }
@@ -160,7 +161,27 @@ public:
         fifo_queue.push({i, j});  // Agregar la nueva posición al final de la cola
     }
 
-    int get_id(){
+    int get_id() const{
         return id;
+    }
+
+    void set_state(uint8_t tag,bitset<2> input){
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                if (addr[i][j] == tag) {
+                    state[i][j]=input;
+                }
+            }
+        }
+    }
+
+    bitset<2> get_state(uint8_t address){
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                if (addr[i][j] == address) {
+                    return state[i][j];
+                }
+            }
+        }
     }
 };
