@@ -1,55 +1,141 @@
 #include "BusInterconnect.h"
 
-BusInterconnect::BusInterconnect(Ram& sharedMem, vector<Cache*>& caches)
+BusInterconnect::BusInterconnect(Ram& sharedMem, int numPEs)
 	: sharedMemory(sharedMem),
-	caches(caches),
+	dataTransmitted(numPEs, 0),
 	numInvalidations(0),
 	numReadRequests(0),
 	numReadResponses(0),
 	numWriteRequests(0),
 	numWriteResponses(0) {}
 
-uint64_t BusInterconnect::readRequest(Cache& cache, int addr)
+BusInterconnect::~BusInterconnect()
 {
-	lock_guard<mutex> lock(bus_mutex);
-	numReadRequests++;
-
-	int blockIndex = addr / cache.getBlockSize(); // Se necesita obtener el tamano del bloque
-	MESIState currentState = getCurrentMESIState(blockIndex);
-
-	if (currentState == INVALID)
 	{
-		assignMESIState(cache, blockIndex, SHARED); // Camiba a S si estaba en I
-		return sharedMemory.read_mem(addr);
+		lock_guard<mutex> lock(queue_mutex);
+		stopBus = true;
 	}
-	numReadResponses++;
-	return cache.get_data(blockIndex, addr);
+	queue_cv.notify_all();
+	if (busThread.joinable())
+	{
+		busThread.join();
+	}
 }
 
-void BusInterconnect::writeRequest(Cache& cache, int addr, uint64_t data)
+future<uint64_t> BusInterconnect::enqueueRead(int peId, int adderss)
 {
-	lock_guard<mutex> lock(bus_mutex);
-	numWriteRequests++;
-
-	int blockIndex = addr / cache.getBlockSize(); // Se necesita obtener el tamano del bloque
-	MESIState currentState = getCurrentMESIState(blockIndex);
-
-	if (currentState == SHARED || currentState == INVALID)
+	Request req;
+	req.peID = peId;
+	req.type = READ;
+	req.address = adderss;
+	// No se necesita data para un read
+	future<uint64_t> fut = req.promise.get_future();
 	{
-		invalidateOtherCaches(cache, blockIndex); // Invalidar las otras cache según el bloque
-		assignMESIState(cache, blockIndex, MODIFIED); // Cambiar a M
+		lock_guard<mutex> lock(queue_mutex);
+		requestQueue.push(move(req));
 	}
-	numWriteResponses++;
-	cache.write(addr, data);
+	queue_cv.notify_one();
+	return fut;
+}
+
+void BusInterconnect::enqueueWrite(int peId, int adderss, uint64_t data)
+{
+	Request req;
+	req.peID = peId;
+	req.type = WRITE;
+	req.address = adderss;
+	req.data = data;
+	// No se necesita promise para un WRITE
+
+	{
+		lock_guard<mutex> lock(queue_mutex);
+		requestQueue.push(move(req));
+	}
+	queue_cv.notify_one();
+}
+
+void BusInterconnect::processRequests()
+{
+	while (true)
+	{
+		unique_lock<mutex> lock(queue_mutex);
+		queue_cv.wait(lock, [this] { return !requestQueue.empty() || stopBus; });
+
+		if (stopBus && requestQueue.empty())
+		{
+			break;
+		}
+
+		// Obtener la respuesta de la queue
+		Request req = move(requestQueue.front());
+		requestQueue.pop();
+		lock.unlock();
+
+		// Procesa la solicitud
+		if (req.type == READ)
+		{
+			{
+				lock_guard<mutex> busLock(bus_mutex);
+				numReadRequests++;
+				uint64_t data = sharedMemory.read_mem(req.address);
+				numReadResponses++;
+				dataTransmitted[req.peID] += sizeof(data);
+				req.promise.set_value(data);
+			}
+		}
+		else if(req.type == WRITE)
+		{
+			{
+				lock_guard<mutex> busLock(bus_mutex);
+				numWriteRequests++;
+				sharedMemory.write_mem(req.address, req.data);
+				numWriteResponses++;
+				dataTransmitted[req.peID] += sizeof(req.data);
+			}
+		}
+	}
 }
 
 void BusInterconnect::assignMESIState(Cache& cache, int blockIndex, MESIState newState)
 {
-	cache.setState(blockIndex, newState); // Se necesita fijar el nuevo state
-	if (newState == INVALID)
+	MESIState currentState = cache.getState(blockIndex);
+
+	switch (newState)
 	{
-		numInvalidations++;
+	case MODIFIED:
+		if (currentState == SHARED || currentState == EXCLUSIVE)
+		{
+			cache.invalidateOtherCaches(blockIndex);
+			cache.setState(blockIndex, MODIFIED);
+		}
+		break;
+	
+	case EXCLUSIVE:
+		if (currentState == INVALID)
+		{
+			cache.setState(blockIndex, EXCLUSIVE);
+		}
+		break;
+
+	case SHARED:
+		if (currentState == EXCLUSIVE)
+		{
+			cache.setState(blockIndex, SHARED);
+		}
+		break;
+
+	case INVALID:
+		cache.setState(blockIndex, INVALID);
+		break;
+	default:
+		break;
 	}
+}
+
+void BusInterconnect::registerInvalidation(int peId)
+{
+	lock_guard<mutex> lock(bus_mutex);
+	numInvalidations++;
 }
 
 int BusInterconnect::getNumInvalidations() const { return numInvalidations; }
@@ -61,27 +147,3 @@ int BusInterconnect::getNumReadResponses() const { return numReadResponses; }
 int BusInterconnect::getNumWriteRequests() const { return numWriteRequests; }
 
 int BusInterconnect::getNumWriteResponses() const{ return numWriteResponses; }
-
-void BusInterconnect::invalidateOtherCaches(Cache &requestingCache, int blockIndex)
-{
-	for (Cache* cache : caches)
-	{
-		if (cache != &requestingCache && cache->getState(blockIndex) != INVALID) // Obtener el state
-		{
-			cache->setState(blockIndex, INVALID); // Fijar el state
-			numInvalidations++;
-		}
-	}
-}
-
-MESIState BusInterconnect::getCurrentMESIState(int blockIndex)
-{
-    for (Cache* cache : caches)
-	{
-		if(cache->getState(blockIndex) != INVALID)	// Obtener el STATE
-		{
-			return cache->getState(blockIndex);		// Obtener el STATE
-		}
-	}
-	return INVALID;	
-}
