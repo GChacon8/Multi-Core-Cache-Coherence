@@ -98,7 +98,7 @@ void BusInterconnect::processRequests()
 
 void BusInterconnect::assignMESIState(Cache& cache, int blockIndex, MESIState newState)
 {
-	MESIState currentState = cache.getState(blockIndex);
+	MESIState currentState = cache.get_state(blockIndex);
 
 	switch (newState)
 	{
@@ -106,26 +106,26 @@ void BusInterconnect::assignMESIState(Cache& cache, int blockIndex, MESIState ne
 		if (currentState == SHARED || currentState == EXCLUSIVE)
 		{
 			cache.invalidateOtherCaches(blockIndex);
-			cache.setState(blockIndex, MODIFIED);
+			cache.set_state(blockIndex, MODIFIED);
 		}
 		break;
 	
 	case EXCLUSIVE:
 		if (currentState == INVALID)
 		{
-			cache.setState(blockIndex, EXCLUSIVE);
+			cache.set_state(blockIndex, EXCLUSIVE);
 		}
 		break;
 
 	case SHARED:
 		if (currentState == EXCLUSIVE)
 		{
-			cache.setState(blockIndex, SHARED);
+			cache.set_state(blockIndex, SHARED);
 		}
 		break;
 
 	case INVALID:
-		cache.setState(blockIndex, INVALID);
+		cache.set_state(blockIndex, INVALID);
 		break;
 	default:
 		break;
