@@ -162,7 +162,7 @@ public:
         return inv_count;
     }
 
-    uint64_t get_state(int block_num) {
+    MESIState get_state(int block_num) {
         return state[block_num];
     }
 
