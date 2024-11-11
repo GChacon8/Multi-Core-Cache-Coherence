@@ -10,4 +10,6 @@ add_executable(Multi_Core_Cache_Coherence
         MESI.cpp
         PE.cpp
         RAM.cpp
-        ROM.cpp)
+        ROM.cpp
+        BusInterconnect.cpp
+        ROM.h)
