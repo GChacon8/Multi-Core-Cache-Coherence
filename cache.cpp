@@ -11,12 +11,12 @@ private:
     // Atributos
     int id;
 
-    uint64_t data[32];
-    uint8_t addr[32];
-    MESIState state[32];
-    bool valid[32];
-    bool dirty[32];
-    bool first[32];
+    uint64_t data[8];
+    uint8_t addr[8];
+    MESIState state[8];
+    bool valid[8];
+    bool dirty[8];
+    int first[8];
     queue<int> fifo_queue; // Ahora solo necesitamos un entero para el índice en lugar de un par
     int miss_count; // Sigue igual
     int inv_count;  // Sigue igual
@@ -27,11 +27,12 @@ public:
     Cache(int cache_id, BusInterconnect& bus):id(cache_id),bus(bus) {
 
         // definir todos los bits validos como 0
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 8; i++) {
             valid[i] = false;
             dirty[i] = false;
             data[i] = 0;
             addr[i] = 0;
+            first[i] = 0;
         }
 
     }
@@ -49,7 +50,7 @@ public:
         uint8_t tag = address;
 
         // Buscar si ya existe el bloque (para actualizar si hay cache hit)
-        for (int index = 0; index < 32; ++index) {
+        for (int index = 0; index < 8; ++index) {
             if (valid[index] && addr[index] == tag) { // Cache hit
                 data[index] = value;
                 cout << "Cache hit (Cache " << id << "): valor leído en el índice [" << index << "].\n";
@@ -58,7 +59,7 @@ public:
         }
 
         // Buscar un bloque inválido para escribir el valor (cache miss)
-        for (int index = 0; index < 32; ++index) {
+        for (int index = 0; index < 8; ++index) {
             if (!valid[index]) { // Encontrar un bloque inválido
                 // Escribir el valor en el bloque inválido
                 data[index]= read_memory(tag);
@@ -99,10 +100,9 @@ public:
 
     uint64_t read(uint8_t address) {
         uint8_t tag = address;
-        uint64_t value;
 
         // Buscar si ya existe el bloque (para un cache hit)
-        for (int index = 0; index < 32; ++index) {
+        for (int index = 0; index < 8; ++index) {
             if (valid[index] && addr[index] == tag) { // Cache hit
                 cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << index << "].\n";
                 return data[index];
@@ -110,11 +110,12 @@ public:
         }
 
         // Buscar un bloque inválido para cargar el valor desde memoria (cache miss)
-        for (int index = 0; index < 32; ++index) {
+        for (int index = 0; index < 8; ++index) {
             if (!valid[index]) { // Encontrar un bloque inválido
                 data[index] = read_memory(address); // Leer el valor de memoria
                 addr[index] = tag;
                 valid[index] = true;
+                first[index]++;
                 miss_count++;
                 fifo_queue.push(index);  // Añadir el índice a la cola FIFO
                 cout << "Cache miss (Cache " << id << "): dato guardado en el índice [" << index << "].\n";
@@ -202,5 +203,9 @@ public:
         }
         return false;
 
+    }
+
+    int get_first(int index){
+        return first[index];
     }
 };

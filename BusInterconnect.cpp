@@ -36,7 +36,11 @@ future<uint64_t> BusInterconnect::enqueueRead(Cache& cache, int blockIndex, int 
 		requestQueue.push(move(req));
 	}
 	queue_cv.notify_one();
-	assignMESIState(cache, blockIndex, SHARED, READ);
+    if(cache.get_first(blockIndex) == 1){
+        assignMESIState(cache, blockIndex, EXCLUSIVE, READ);
+    } else{
+	    assignMESIState(cache, blockIndex, SHARED, READ);
+    }
 	return fut;
 }
 
@@ -125,8 +129,9 @@ void BusInterconnect::assignMESIState(Cache& cache, int blockIndex, MESIState ne
 			cache.set_state(blockIndex, MODIFIED);
 		}
 		break;
+
 	case EXCLUSIVE:
-		if ((currentState == INVALID && cache.get_invalidation_count() == 0) && operationType == READ)
+		if (currentState == INVALID && operationType == READ)
 		{
 			cache.set_state(blockIndex, EXCLUSIVE);
 		}
@@ -155,47 +160,9 @@ void BusInterconnect::assignMESIState(Cache& cache, int blockIndex, MESIState ne
 		cache.set_state(blockIndex, INVALID);
 		break;
 	default:
+        break;
 
 	}
-	/*
-	switch (newState)
-	{
-	case MODIFIED:
-		if (currentState == SHARED || currentState == EXCLUSIVE)
-		{
-			int actual_cache = cache.get_id();
-			for (int i = 0; i < 4; i++)
-			{
-				if (actual_cache != i)
-				{
-					cache.set_state(blockIndex, INVALID);
-				}				
-			}
-			// cache.invalidateOtherCaches(blockIndex);
-			cache.set_state(blockIndex, MODIFIED);
-		}
-		break;
-	
-	case EXCLUSIVE:
-		if (currentState == INVALID)
-		{
-			cache.set_state(blockIndex, EXCLUSIVE);
-		}
-		break;
-
-	case SHARED:
-		if (currentState == EXCLUSIVE)
-		{
-			cache.set_state(blockIndex, SHARED);
-		}
-		break;
-
-	case INVALID:
-		cache.set_state(blockIndex, INVALID);
-		break;
-	default:
-		break;
-	}*/
 }
 
 void BusInterconnect::registerInvalidation(int peId)
