@@ -8,7 +8,9 @@
     "tuple": "cpp",
     "type_traits": "cpp",
     "utility": "cpp",
-    "plyconfig.json": "jsonc"
+    "plyconfig.json": "jsonc",
+    "atomic": "cpp",
+    "condition_variable": "cpp"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",

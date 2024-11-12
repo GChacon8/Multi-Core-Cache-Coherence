@@ -47,15 +47,15 @@ struct Request
 class BusInterconnect {
 public:
 	// Constructor
-	BusInterconnect(Ram& sharedMem, int numPEs);
+	BusInterconnect(Ram& sharedMem, int numPEs, vector<Cache*>& caches);
 	~BusInterconnect();
 
 	// Metodos lectura y escritura
-	future<uint64_t> enqueueRead(int peId, int addr);
-	void enqueueWrite(int peId, int address, uint64_t data);
+	future<uint64_t> enqueueRead(Cache& cache, int blockIndex, int peId, int adderss);
+	void enqueueWrite(Cache& cache, int blockIndex, int peId, int address, uint64_t data);
 
 	// Metodo para asignar mesi, hace referencia Cache& cache, primer parametro
-	void assignMESIState(Cache& cache, int blockIndex, MESIState newState);
+	void assignMESIState(Cache& cache, int blockIndex, MESIState newState, OperationType operationType);
 
 	// Registrar invalidacion
 	void registerInvalidation(int peId);
@@ -71,6 +71,7 @@ private:
 	void processRequests();
 
 	Ram& sharedMemory;
+	vector<Cache*>& caches;
 	vector<uint64_t> dataTransmitted;
 	mutex bus_mutex;
 
