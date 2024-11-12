@@ -121,4 +121,8 @@ public:
         program_counter++;
     }
 
+    Cache get_cache(){
+        return cache;
+    }
+
 };

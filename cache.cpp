@@ -16,6 +16,7 @@ private:
     MESIState state[32];
     bool valid[32];
     bool dirty[32];
+    bool first[32];
     queue<int> fifo_queue; // Ahora solo necesitamos un entero para el índice en lugar de un par
     int miss_count; // Sigue igual
     int inv_count;  // Sigue igual
@@ -177,5 +178,30 @@ public:
 
     void write_memory(int block_num){
         bus.enqueueWrite(id, addr[block_num], data[block_num]);
+    }
+
+    uint8_t get_address(int index){
+        return addr[index];
+    };
+
+    int get_index(uint8_t address){
+        for (int index = 0; index < 32; ++index) {
+            if (addr[index] == address) { // Cache hit
+                cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << index << "].\n";
+                return index;
+            }
+        }
+
+    }
+
+    bool is_in_cache(uint8_t address){
+        for (int index = 0; index < 32; ++index) {
+            if (addr[index] == address) { // Cache hit
+                cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << index << "].\n";
+                return true;
+            }
+        }
+        return false;
+
     }
 };
