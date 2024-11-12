@@ -139,8 +139,7 @@ public:
         }
 
         // Reemplazar el bloque con el nuevo valor
-        future<uint64_t> load_data = bus.enqueueRead(id, address);
-        data[old_index] = load_data.get();  // Leer el nuevo valor de memoria
+        data[old_index] = read_memory(address);  // Leer el nuevo valor de memoria
         addr[old_index] = tag;
         valid[old_index] = true;
         dirty[old_index] = false;
@@ -172,12 +171,12 @@ public:
     }
 
     uint64_t read_memory(uint8_t address){
-        future<uint64_t> load_data = bus.enqueueRead(id, address);
+        future<uint64_t> load_data = bus.enqueueRead(*this, this->get_index(address),id, address);
         return load_data.get(); // Leer el valor de memoria
     }
 
     void write_memory(int block_num){
-        bus.enqueueWrite(id, addr[block_num], data[block_num]);
+        bus.enqueueWrite(*this, block_num, id, addr[block_num], data[block_num]);
     }
 
     uint8_t get_address(int index){

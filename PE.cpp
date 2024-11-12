@@ -3,6 +3,7 @@
 #include "cache.cpp"
 #include <cstdint> // For uint64_t
 #include "ROM.h"
+#include "BusInterconnect.h"
 #include <unordered_map>
 using namespace std;
 
@@ -16,10 +17,11 @@ private:
     int program_counter = 0; // Posición actual de la instrucción en ROM
     int prev_reg_num = 0;
     Rom rom;
+    BusInterconnect& bus;
 
 public:
     // Constructor
-    PE(int _id,const std::string& rom_filename) : id(_id), cache(_id),rom(rom_filename){
+    PE(int _id,const std::string& rom_filename, BusInterconnect& bus) : id(_id), cache(_id, bus),rom(rom_filename), bus(bus){
         label_map=rom.get_label_map();
         reg[0]=0;
         reg[1]=0;

@@ -10,7 +10,11 @@
     "utility": "cpp",
     "plyconfig.json": "jsonc",
     "atomic": "cpp",
-    "condition_variable": "cpp"
+    "condition_variable": "cpp",
+    "*.tcc": "cpp",
+    "memory": "cpp",
+    "future": "cpp",
+    "istream": "cpp"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
