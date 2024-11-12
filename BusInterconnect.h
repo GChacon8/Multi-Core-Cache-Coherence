@@ -11,6 +11,7 @@
 #include <functional>
 #include <future>
 #include <stdexcept>
+#include <iostream>
 #include "Ram.h"
 
 // Enumeración para los estados MESI
@@ -69,10 +70,9 @@ public:
 	int getNumWriteRequests() const;
 	int getNumWriteResponses() const;
 	uint64_t getDataTransmitted(int peId) const;
+    void processRequests();
 
 private:
-	void processRequests();
-
 	Ram& sharedMemory;
 	vector<Cache*>& caches;
 	vector<uint64_t> dataTransmitted;

@@ -96,8 +96,8 @@ uint64_t Cache::read(uint8_t address) {
     // Buscar un bloque inválido para cargar el valor desde memoria (cache miss)
     for (int index = 0; index < 8; ++index) {
         if (!valid[index]) { // Encontrar un bloque inválido
-            data[index] = read_memory(address); // Leer el valor de memoria
             addr[index] = tag;
+            data[index] = read_memory(address); // Leer el valor de memoria
             valid[index] = true;
             first[index]++;
             miss_count++;

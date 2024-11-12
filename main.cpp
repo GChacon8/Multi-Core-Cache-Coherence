@@ -14,10 +14,14 @@ using namespace std;
 
 int main() {
     Ram ram;
+    for (int i = 0; i < 256; ++i) {
+        ram.write_mem(i,i);
+    }
     vector<Cache*> caches;
-    BusInterconnect bus(ram, 4, caches);  // 4 es el número de PEs, por ejemplo
+    BusInterconnect bus(ram, 1, caches);  // 4 es el número de PEs, por ejemplo
+    bus.processRequests();
     // Actualización de las rutas a la nueva ubicación de los archivos
-    PE core1 = PE(1, "ROM.txt", bus);
+    PE core1 = PE(1, "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt", bus);
     //PE core2 = PE(2);
     //PE core3 = PE(3);
     //PE core4 = PE(4);
@@ -28,7 +32,7 @@ int main() {
     // Puedes utilizar el objeto rom para obtener instrucciones
     //inst current_instruction = rom.get_instruction();
 
-    printf("SE EJECUTÓ!!!");
+    printf("SE EJECUTO!!!");
 
     /*while (current_instruction.inst != "END") { // -1 indica el fin de las instrucciones
         // Procesar la instrucción actual

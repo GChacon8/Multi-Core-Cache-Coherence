@@ -19,7 +19,7 @@ void Rom::load_instructions(const std::string& filename) {
         }
 
         iss >> op;
-        printf("LA OPERACIÓN ES: ");
+        printf("LA OPERACION ES: ");
         printf("%s", op.c_str());
         printf("\n");
 

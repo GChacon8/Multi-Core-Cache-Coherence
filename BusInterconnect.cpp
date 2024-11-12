@@ -37,11 +37,12 @@ future<uint64_t> BusInterconnect::enqueueRead(Cache& cache, int blockIndex, int 
 		requestQueue.push(move(req));
 	}
 	queue_cv.notify_one();
-    if(cache.get_first(blockIndex) == 1){
+    if(cache.get_first(blockIndex) == 0){
         assignMESIState(cache, blockIndex, EXCLUSIVE, READ);
     } else{
 	    assignMESIState(cache, blockIndex, SHARED, READ);
     }
+    std::cout<<fut.get()<<std::endl;
 	return fut;
 }
 

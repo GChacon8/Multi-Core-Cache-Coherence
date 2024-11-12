@@ -2,10 +2,12 @@
 #define RAM_H
 
 #include <cstdint> // Para uint64_t
+#include <mutex>
 
 class Ram { 
 private:
     uint64_t mem[256];  // Memoria de 256 bloques de 64 bits
+    std::mutex memory_mutex;
 
 public:
     // Constructor por defecto
