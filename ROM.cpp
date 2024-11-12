@@ -19,6 +19,10 @@ void Rom::load_instructions(const std::string& filename) {
         }
 
         iss >> op;
+        printf("LA OPERACIÓN ES: ");
+        printf("%s", op.c_str());
+        printf("\n");
+
         if (op == "LOAD") {
             instruction.inst = "LOAD";
             iss >> instruction.reg_num >> instruction.addr;

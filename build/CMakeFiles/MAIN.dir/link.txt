@@ -1,0 +1,1 @@
+/usr/bin/g++ CMakeFiles/MAIN.dir/main.cpp.o CMakeFiles/MAIN.dir/BusInterconnect.cpp.o CMakeFiles/MAIN.dir/PE.cpp.o CMakeFiles/MAIN.dir/ROM.cpp.o CMakeFiles/MAIN.dir/cache.cpp.o CMakeFiles/MAIN.dir/Ram.cpp.o -o MAIN 

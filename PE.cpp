@@ -1,6 +1,5 @@
 #include <iostream>
 #include <bitset>  // Librería para bitset
-#include "cache.cpp"
 #include <cstdint> // For uint64_t
 #include "ROM.h"
 #include "BusInterconnect.h"

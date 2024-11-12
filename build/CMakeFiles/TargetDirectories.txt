@@ -1,0 +1,3 @@
+/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build/CMakeFiles/MultiCoreCacheCoherence.dir
+/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build/CMakeFiles/edit_cache.dir
+/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build/CMakeFiles/rebuild_cache.dir

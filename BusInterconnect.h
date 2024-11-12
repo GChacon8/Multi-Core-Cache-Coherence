@@ -1,7 +1,6 @@
 #pragma once
 #ifndef BUS_INTERCONNECT_H
 #define	BUS_INTERCONNECT_H
-
 #include <vector>
 #include <mutex>
 #include <atomic>
@@ -12,37 +11,40 @@
 #include <functional>
 #include <future>
 #include <stdexcept>
-#include "RAM.cpp"
-#include "cache.cpp"
-// #include "Cache.h"
-// Asumo que asi se llama la libreria, tambi�n puede ser que est� anidada dentro de los PEs
+#include "Ram.h"
 
+// Enumeración para los estados MESI
+enum MESIState {
+    MODIFIED,
+    EXCLUSIVE,
+    SHARED,
+    INVALID
+};
+
+// Enumeración para los tipos de operaciones
+enum OperationType {
+    READ,
+    WRITE
+};
+
+// Estructura para representar una solicitud de memoria
+struct Request {
+    int peID;                      // Identificador del procesador
+    OperationType type;            // Tipo de operación (lectura o escritura)
+    int address;                   // Dirección de memoria
+    uint64_t data;                 // Datos de la solicitud
+    std::promise<uint64_t> promise;  // Promesa asociada a la operación
+};
+
+
+
+
+#include "cache.h"
 using namespace std;
 
+
+class Cache;
 class Ram;
-
-// class Cache;
-
-enum MESIState {
-	MODIFIED,
-	EXCLUSIVE,
-	SHARED,
-	INVALID
-};
-
-enum OperationType {
-	READ,
-	WRITE
-};
-
-struct Request
-{
-	int peID;
-	OperationType type;
-	int address;
-	uint64_t data;
-	promise<uint64_t> promise;
-};
 
 class BusInterconnect {
 public:
@@ -55,7 +57,8 @@ public:
 	void enqueueWrite(Cache& cache, int blockIndex, int peId, int address, uint64_t data);
 
 	// Metodo para asignar mesi, hace referencia Cache& cache, primer parametro
-	void assignMESIState(Cache& cache, int blockIndex, MESIState newState, OperationType operationType);
+	void assignMESIState(Cache& cache, int blockIndex, MESIState newstate, OperationType operationType);
+	//void assignMESIState(Cache& cache, int blockIndex, MESIState newState, OperationType operationType);
 
 	// Registrar invalidacion
 	void registerInvalidation(int peId);

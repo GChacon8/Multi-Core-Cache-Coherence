@@ -1,0 +1,38 @@
+[
+{
+  "directory": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build",
+  "command": "/usr/bin/g++   -g -std=gnu++11 -o CMakeFiles/MultiCoreCacheCoherence.dir/main.cpp.o -c /home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/main.cpp",
+  "file": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/main.cpp",
+  "output": "CMakeFiles/MultiCoreCacheCoherence.dir/main.cpp.o"
+},
+{
+  "directory": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build",
+  "command": "/usr/bin/g++   -g -std=gnu++11 -o CMakeFiles/MultiCoreCacheCoherence.dir/BusInterconnect.cpp.o -c /home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/BusInterconnect.cpp",
+  "file": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/BusInterconnect.cpp",
+  "output": "CMakeFiles/MultiCoreCacheCoherence.dir/BusInterconnect.cpp.o"
+},
+{
+  "directory": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build",
+  "command": "/usr/bin/g++   -g -std=gnu++11 -o CMakeFiles/MultiCoreCacheCoherence.dir/PE.cpp.o -c /home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/PE.cpp",
+  "file": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/PE.cpp",
+  "output": "CMakeFiles/MultiCoreCacheCoherence.dir/PE.cpp.o"
+},
+{
+  "directory": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build",
+  "command": "/usr/bin/g++   -g -std=gnu++11 -o CMakeFiles/MultiCoreCacheCoherence.dir/ROM.cpp.o -c /home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.cpp",
+  "file": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.cpp",
+  "output": "CMakeFiles/MultiCoreCacheCoherence.dir/ROM.cpp.o"
+},
+{
+  "directory": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build",
+  "command": "/usr/bin/g++   -g -std=gnu++11 -o CMakeFiles/MultiCoreCacheCoherence.dir/cache.cpp.o -c /home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/cache.cpp",
+  "file": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/cache.cpp",
+  "output": "CMakeFiles/MultiCoreCacheCoherence.dir/cache.cpp.o"
+},
+{
+  "directory": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/build",
+  "command": "/usr/bin/g++   -g -std=gnu++11 -o CMakeFiles/MultiCoreCacheCoherence.dir/Ram.cpp.o -c /home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/Ram.cpp",
+  "file": "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/Ram.cpp",
+  "output": "CMakeFiles/MultiCoreCacheCoherence.dir/Ram.cpp.o"
+}
+]

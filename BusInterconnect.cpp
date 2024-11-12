@@ -1,5 +1,6 @@
 #include "BusInterconnect.h"
 
+
 BusInterconnect::BusInterconnect(Ram& sharedMem, int numPEs, vector<Cache*>& caches)
 	: sharedMemory(sharedMem),
 	dataTransmitted(numPEs, 0),
