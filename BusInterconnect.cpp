@@ -63,6 +63,11 @@ void BusInterconnect::enqueueWrite(Cache& cache, int blockIndex,int peId, int ad
 	queue_cv.notify_one();
 }
 
+void BusInterconnect::notifyOtherCaches(Cache &cache, int blockIndex)
+{
+	assignMESIState(cache, blockIndex, MODIFIED, WRITE);
+}
+
 void BusInterconnect::processRequests()
 {
 	int contador = 0;	

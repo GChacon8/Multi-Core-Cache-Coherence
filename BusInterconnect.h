@@ -37,12 +37,8 @@ struct Request {
     std::promise<uint64_t> promise;  // Promesa asociada a la operación
 };
 
-
-
-
 #include "cache.h"
 using namespace std;
-
 
 class Cache;
 class Ram;
@@ -56,6 +52,8 @@ public:
 	// Metodos lectura y escritura
 	future<uint64_t> enqueueRead(Cache& cache, int blockIndex, int peId, int adderss);
 	void enqueueWrite(Cache& cache, int blockIndex, int peId, int address, uint64_t data);
+
+	void notifyOtherCaches(Cache& cache, int blockIndex);
 
 	// Metodo para asignar mesi, hace referencia Cache& cache, primer parametro
 	void assignMESIState(Cache& cache, int blockIndex, MESIState newstate, OperationType operationType);
