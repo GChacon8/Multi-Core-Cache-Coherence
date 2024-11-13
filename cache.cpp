@@ -68,9 +68,9 @@ void Cache::write(uint8_t address, uint64_t value) {
     fifo_queue.pop();  // Eliminar el bloque de la cola FIFO
 
     // Si el bloque antiguo está "dirty", hacer write-back a memoria
-    if (dirty[old_index]) {
+    if (state[old_index] == MODIFIED) {
         cout << "Write-back (Cache " << id << "): escribiendo datos del índice [" << old_index << "] a memoria.\n";
-        write_memory(old_index);
+        Writeback(old_index);
     }
 
     // Incrementar el contador de invalidaciones si se está reemplazando un bloque válido
@@ -122,9 +122,9 @@ uint64_t Cache::read(uint8_t address) {
     fifo_queue.pop();  // Eliminar el bloque de la cola FIFO
 
     // Si el bloque antiguo está "dirty", hacer write-back a memoria
-    if (dirty[old_index]) {
+    if (state[old_index]==MODIFIED) {
         cout << "Write-back (Cache " << id << "): escribiendo datos del indice [" << old_index << "] a memoria.\n";
-        write_memory(old_index);
+        Writeback(old_index);
     }
 
     // Incrementar el contador de invalidaciones si se está reemplazando un bloque válido
@@ -173,6 +173,10 @@ uint64_t Cache::read_memory(uint8_t address) {
 
 void Cache::write_memory(int block_num) {
     bus.enqueueWrite(*this, block_num, id, addr[block_num], data[block_num]);
+}
+
+void Cache::Writeback(int block_num){
+    bus.alwaysWriteOnMemory(block_num, id, addr[block_num], data[block_num]);
 }
 
 // Métodos de utilidad

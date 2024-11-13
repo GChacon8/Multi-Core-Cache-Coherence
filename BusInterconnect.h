@@ -52,7 +52,7 @@ public:
 	// Metodos lectura y escritura
 	future<uint64_t> enqueueRead(Cache& cache, int blockIndex, int peId, int adderss);
 	void enqueueWrite(Cache& cache, int blockIndex, int peId, int address, uint64_t data);
-	void alwaysWriteOnMemory(Cache& cache, int blockIndex, int peId, int address, uint64_t data);
+	void alwaysWriteOnMemory(int blockIndex, int peId, int address, uint64_t data);
 
 	void notifyOtherCaches(Cache& cache, int blockIndex);
 

@@ -47,6 +47,8 @@ public:
     int get_index(uint8_t address);
     bool is_in_cache(uint8_t address);
     int get_first(int index);
+
+    void Writeback(int blocknum);
 };
 
 #endif // CACHE_H
