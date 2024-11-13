@@ -1,5 +1,5 @@
 #include "BusInterconnect.h"
-
+#include <unistd.h>
 
 BusInterconnect::BusInterconnect(Ram& sharedMem, int numPEs, vector<Cache*>& caches)
 	: sharedMemory(sharedMem),
@@ -42,7 +42,7 @@ future<uint64_t> BusInterconnect::enqueueRead(Cache& cache, int blockIndex, int 
     } else{
 	    assignMESIState(cache, blockIndex, SHARED, READ);
     }
-    std::cout<<fut.get()<<std::endl;
+    //std::cout<<fut.get()<< " lol"<<std::endl;
 	return fut;
 }
 
@@ -65,16 +65,26 @@ void BusInterconnect::enqueueWrite(Cache& cache, int blockIndex,int peId, int ad
 
 void BusInterconnect::processRequests()
 {
+	int contador = 0;	
 	while (true)
 	{
+
+		sleep(1);
+		printf("%d\n", contador);
+		contador++;
+
+		
 		unique_lock<mutex> lock(queue_mutex);
 		queue_cv.wait(lock, [this] { return !requestQueue.empty() || stopBus; });
+		printf("%s\n", stopBus ? "true" : "false");
 
+		
 		if (stopBus && requestQueue.empty())
 		{
+			printf("BREAK\n");
 			break;
 		}
-
+		
 		// Obtener la respuesta de la queue
 		Request req = move(requestQueue.front());
 		requestQueue.pop();

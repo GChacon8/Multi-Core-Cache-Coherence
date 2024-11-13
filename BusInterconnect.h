@@ -71,7 +71,8 @@ public:
 	int getNumWriteResponses() const;
 	uint64_t getDataTransmitted(int peId) const;
     void processRequests();
-
+	bool stopBus;
+	
 private:
 	Ram& sharedMemory;
 	vector<Cache*>& caches;
@@ -92,7 +93,7 @@ private:
 
 	// Hilo del bus
 	thread busThread;
-	bool stopBus;
+	
 };
 
 #endif // !BUS_INTERCONNECT_H

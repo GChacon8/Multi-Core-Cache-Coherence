@@ -5,6 +5,7 @@
 #include "PE.cpp"
 #include "Ram.h"
 #include "ROM.h"
+#include <thread>
 using namespace std;
 
 
@@ -15,25 +16,26 @@ using namespace std;
 int main() {
     Ram ram;
     for (int i = 0; i < 256; ++i) {
-        ram.write_mem(i,i);
+        ram.write_mem(i, i);
     }
     vector<Cache*> caches;
     BusInterconnect bus(ram, 1, caches);  // 4 es el número de PEs, por ejemplo
-    bus.processRequests();
-    // Actualización de las rutas a la nueva ubicación de los archivos
-    PE core1 = PE(1, "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt", bus);
+   
+    thread bus_thread(&BusInterconnect::processRequests, &bus);
+
+    PE core1 = PE(1, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.txt", bus);
     //PE core2 = PE(2);
     //PE core3 = PE(3);
     //PE core4 = PE(4);
-
+    //
     // Instancia la ROM, pasando el nombre del archivo de instrucciones
     //Rom rom(R"(~/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.txt)");
-
+    //
     // Puedes utilizar el objeto rom para obtener instrucciones
     //inst current_instruction = rom.get_instruction();
 
     printf("SE EJECUTO!!!");
-
+   
     /*while (current_instruction.inst != "END") { // -1 indica el fin de las instrucciones
         // Procesar la instrucción actual
         std::cout << "Instruccion: " << current_instruction.inst << ", "
@@ -58,4 +60,9 @@ int main() {
     core1.next();
     sleep(2);
     core1.next();
+
+
+    bus_thread.join();
+    
+
 }
