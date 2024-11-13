@@ -35,6 +35,9 @@ void Cache::write(uint8_t address, uint64_t value) {
     // Buscar si ya existe el bloque (para actualizar si hay cache hit)
     for (int index = 0; index < 8; ++index) {
         if (valid[index] && addr[index] == tag) { // Cache hit
+            if(state[index]==SHARED || state[index] ==INVALID){
+                bus.notifyOtherCaches(*this,index);
+            }
             data[index] = value;
             cout << "Cache hit (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): valor leído en el índice [" << index << "].\n";
             return;
@@ -48,7 +51,7 @@ void Cache::write(uint8_t address, uint64_t value) {
             //data[index] = read_memory(tag);
 
             //ocupo avisar que se realizo un write
-
+            bus.notifyOtherCaches(*this,index);
             data[index] = value;
             addr[index] = tag;
             valid[index] = true;
@@ -82,6 +85,7 @@ void Cache::write(uint8_t address, uint64_t value) {
     valid[old_index] = true;
     dirty[old_index] = true;
     fifo_queue.push(old_index);  // Agregar la nueva posición al final de la cola
+    bus.notifyOtherCaches(*this,old_index);
 }
 
 // Método para leer un valor de la caché
@@ -92,6 +96,9 @@ uint64_t Cache::read(uint8_t address) {
     for (int index = 0; index < 8; ++index) {
         if (valid[index] && addr[index] == tag) { // Cache hit
             cout << "Cache hit (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): leyendo dato en el índice [" << index << "].\n";
+            if (state[index]!=EXCLUSIVE){
+                bus.assignMESIState(*this,index,SHARED,READ);
+            }
             return data[index];
         }
     }
@@ -132,6 +139,7 @@ uint64_t Cache::read(uint8_t address) {
     valid[old_index] = true;
     dirty[old_index] = false;
     fifo_queue.push(old_index);  // Agregar la nueva posición al final de la cola
+    // VEREFICAR SI EL NUEVO BLOQUE SI ESTA COMPARTIDO EN OTRA CACHE;
 
     return data[old_index];
 }
