@@ -23,7 +23,8 @@ int main() {
    
     thread bus_thread(&BusInterconnect::processRequests, &bus);
 
-    PE core1 = PE(1, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.txt", bus);
+    //PE core1 = PE(1, "/home//Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.txt", bus);
+    PE core1 = PE(1, "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt", bus);
     //PE core2 = PE(2);
     //PE core3 = PE(3);
     //PE core4 = PE(4);
@@ -48,17 +49,18 @@ int main() {
     }*/
 
     core1.next();
-    sleep(2);
     core1.next();
-    sleep(2);
     core1.next();
-    sleep(2);
     core1.next();
-    sleep(2);
     core1.next();
-    sleep(2);
     core1.next();
-    sleep(2);
+    core1.next();
+    core1.next();
+    core1.next();
+    core1.next();
+    core1.next();
+    core1.next();
+    core1.next();
     core1.next();
 
 

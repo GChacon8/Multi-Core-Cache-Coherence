@@ -36,7 +36,7 @@ void Cache::write(uint8_t address, uint64_t value) {
     for (int index = 0; index < 8; ++index) {
         if (valid[index] && addr[index] == tag) { // Cache hit
             data[index] = value;
-            cout << "Cache hit (Cache " << id << "): valor leído en el índice [" << index << "].\n";
+            cout << "Cache hit (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): valor leído en el índice [" << index << "].\n";
             return;
         }
     }
@@ -45,14 +45,17 @@ void Cache::write(uint8_t address, uint64_t value) {
     for (int index = 0; index < 8; ++index) {
         if (!valid[index]) { // Encontrar un bloque inválido
             // Escribir el valor en el bloque inválido
-            data[index] = read_memory(tag);
+            //data[index] = read_memory(tag);
+
+            //ocupo avisar que se realizo un write
+
             data[index] = value;
             addr[index] = tag;
             valid[index] = true;
             dirty[index] = true;
             miss_count++;
             fifo_queue.push(index);  // Añadir el índice a la cola FIFO
-            cout << "Cache miss (Cache " << id << "): dato escrito en el índice [" << index << "].\n";
+            cout << "Cache miss (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): dato escrito en el índice [" << index << "].\n";
             return;
         }
     }
@@ -88,7 +91,7 @@ uint64_t Cache::read(uint8_t address) {
     // Buscar si ya existe el bloque (para un cache hit)
     for (int index = 0; index < 8; ++index) {
         if (valid[index] && addr[index] == tag) { // Cache hit
-            cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << index << "].\n";
+            cout << "Cache hit (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): leyendo dato en el índice [" << index << "].\n";
             return data[index];
         }
     }
@@ -102,7 +105,7 @@ uint64_t Cache::read(uint8_t address) {
             first[index]++;
             miss_count++;
             fifo_queue.push(index);  // Añadir el índice a la cola FIFO
-            cout << "Cache miss (Cache " << id << "): dato guardado en el índice [" << index << "].\n";
+            cout << "Cache miss (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): dato guardado en el indice [" << index << "].\n";
             return data[index];
         }
     }
@@ -113,14 +116,14 @@ uint64_t Cache::read(uint8_t address) {
 
     // Si el bloque antiguo está "dirty", hacer write-back a memoria
     if (dirty[old_index]) {
-        cout << "Write-back (Cache " << id << "): escribiendo datos del índice [" << old_index << "] a memoria.\n";
+        cout << "Write-back (Cache " << id << "): escribiendo datos del indice [" << old_index << "] a memoria.\n";
         write_memory(old_index);
     }
 
     // Incrementar el contador de invalidaciones si se está reemplazando un bloque válido
     if (valid[old_index]) {
         inv_count++;
-        cout << "Invalidación (Cache " << id << "): bloque en el índice [" << old_index << "] invalidado.\n";
+        cout << "Invalidacion (Cache " << id << "): bloque en el indice [" << old_index << "] invalidado.\n";
     }
 
     // Reemplazar el bloque con el nuevo valor
@@ -172,7 +175,7 @@ uint8_t Cache::get_address(int index) {
 int Cache::get_index(uint8_t address) {
     for (int index = 0; index < 8; ++index) {
         if (addr[index] == address) { // Cache hit
-            cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << index << "].\n";
+            cout << "Cache hit (Cache " << id << "): leyendo dato en el indice [" << index << "].\n";
             return index;
         }
     }
@@ -182,7 +185,7 @@ int Cache::get_index(uint8_t address) {
 bool Cache::is_in_cache(uint8_t address) {
     for (int index = 0; index < 8; ++index) {
         if (addr[index] == address) { // Cache hit
-            cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << index << "].\n";
+            cout << "Cache hit (Cache " << id << "): leyendo dato en el indice [" << index << "].\n";
             return true;
         }
     }

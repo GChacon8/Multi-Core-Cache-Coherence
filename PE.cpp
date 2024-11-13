@@ -22,7 +22,7 @@ public:
     // Constructor
     PE(int _id,const std::string& rom_filename, BusInterconnect& bus) : id(_id), cache(_id, bus),rom(rom_filename), bus(bus){
         label_map=rom.get_label_map();
-        reg[0]=9;
+        reg[0]=0;
         reg[1]=0;
         reg[2]=0;
         reg[3]=0;
