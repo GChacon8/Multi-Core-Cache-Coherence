@@ -63,6 +63,20 @@ void BusInterconnect::enqueueWrite(Cache& cache, int blockIndex,int peId, int ad
 	queue_cv.notify_one();
 }
 
+void BusInterconnect::alwaysWriteOnMemory(Cache &cache, int blockIndex, int peId, int address, uint64_t data)
+{
+	Request req;
+	req.peID = peId;
+	req.type = WRITE;
+	req.address = adderss;
+	req.data = data;
+	{
+		lock_guard<mutex> lock(queue_mutex);
+		requestQueue.push(move(req));
+	}
+	queue_cv.notify_one();
+}
+
 void BusInterconnect::notifyOtherCaches(Cache &cache, int blockIndex)
 {
 	assignMESIState(cache, blockIndex, MODIFIED, WRITE);
