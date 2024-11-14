@@ -14,7 +14,8 @@
     "*.tcc": "cpp",
     "memory": "cpp",
     "future": "cpp",
-    "istream": "cpp"
+    "istream": "cpp",
+    "vector": "cpp"
   },
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
