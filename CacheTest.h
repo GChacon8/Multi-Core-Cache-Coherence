@@ -17,7 +17,12 @@ public:
     MESIState mesiState;
 
     CacheBlock() = default;
-    CacheBlock(MESIState initialState, bool initailValid, uint64_t initialTag, const std::vector<uint64_t>& initialData) : state(initialState), valid(initailValid), tag(initialTag), data(initialData) {}
+    CacheBlock()
+        : valid(false),
+        dirty(false),
+        mesiState(INVALID),
+        tag(0),
+        data(4, 0) {}
 };
 
 class Cache {
