@@ -24,7 +24,7 @@ BusInterconnect::~BusInterconnect()
 	}
 }
 
-future<uint64_t> BusInterconnect::enqueueRead(Cache& cache, int blockIndex, int peId, int adderss)
+future<uint64_t> BusInterconnect::enqueueRead(Cache& cache, int i, int j, int peId, int adderss)
 {
 	Request req;
 	req.peID = peId;
@@ -37,16 +37,16 @@ future<uint64_t> BusInterconnect::enqueueRead(Cache& cache, int blockIndex, int 
 		requestQueue.push(move(req));
 	}
 	queue_cv.notify_one();
-    if(cache.get_first(blockIndex) == 0){
-        assignMESIState(cache, blockIndex, EXCLUSIVE, READ);
+    if(cache.get_first(i,j) == 0){
+        assignMESIState(cache, i, j, EXCLUSIVE, READ);
     } else{
-	    assignMESIState(cache, blockIndex, SHARED, READ);
+	    assignMESIState(cache, i, j, SHARED, READ);
     }
     //std::cout<<fut.get()<< " lol"<<std::endl;
 	return fut;
 }
 
-void BusInterconnect::enqueueWrite(Cache& cache, int blockIndex,int peId, int adderss, uint64_t data)
+void BusInterconnect::enqueueWrite(Cache& cache, int i, int j,int peId, int adderss, uint64_t data)
 {
 	Request req;
 	req.peID = peId;
@@ -59,11 +59,11 @@ void BusInterconnect::enqueueWrite(Cache& cache, int blockIndex,int peId, int ad
 		lock_guard<mutex> lock(queue_mutex);
 		requestQueue.push(move(req));
 	}
-	assignMESIState(cache, blockIndex, MODIFIED, WRITE);
+	assignMESIState(cache,i, j, MODIFIED, WRITE);
 	queue_cv.notify_one();
 }
 
-void BusInterconnect::alwaysWriteOnMemory(int blockIndex, int peId, int address, uint64_t data)
+void BusInterconnect::alwaysWriteOnMemory(int i, int j, int peId, int address, uint64_t data)
 {
 	Request req;
 	req.peID = peId;
@@ -77,9 +77,9 @@ void BusInterconnect::alwaysWriteOnMemory(int blockIndex, int peId, int address,
 	queue_cv.notify_one();
 }
 
-void BusInterconnect::notifyOtherCaches(Cache &cache, int blockIndex)
+void BusInterconnect::notifyOtherCaches(Cache &cache, int i, int j)
 {
-	assignMESIState(cache, blockIndex, MODIFIED, WRITE);
+	assignMESIState(cache, i, j, MODIFIED, WRITE);
 }
 
 void BusInterconnect::processRequests()
@@ -134,61 +134,61 @@ void BusInterconnect::processRequests()
 	}
 }
 
-void BusInterconnect::assignMESIState(Cache& cache, int blockIndex, MESIState newState, OperationType operationType)
+void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newState, OperationType operationType)
 {
-	MESIState currentState = cache.get_state(blockIndex);
+	MESIState currentState = cache.get_state(i,j);
 
 	switch (newState)
 	{
 	case MODIFIED:
 		if((currentState == SHARED || currentState == INVALID) && operationType == WRITE)
 		{
-			int address = cache.get_address(blockIndex);
+			int address = cache.get_address(i,j);
 			for (auto& other_cache : caches)
 			{
 				if (other_cache->is_in_cache(address))
 				{
-					other_cache->set_state(other_cache->get_index(address), INVALID);
+					other_cache->set_state(other_cache->get_index(address).first, other_cache->get_index(address).second,INVALID);
 				}
 			}	
-			cache.set_state(blockIndex, MODIFIED);
+			cache.set_state(i, j, MODIFIED);
 		} else if ((currentState == EXCLUSIVE || currentState == INVALID) && operationType == WRITE)
 		{
-			cache.set_state(blockIndex, MODIFIED);
+			cache.set_state(i, j, MODIFIED);
 		} else if (currentState == MODIFIED)
 		{
-			cache.set_state(blockIndex, MODIFIED);
+			cache.set_state(i, j, MODIFIED);
 		}
 		break;
 
 	case EXCLUSIVE:
 		if (currentState == INVALID && operationType == READ)
 		{
-			cache.set_state(blockIndex, EXCLUSIVE);
+			cache.set_state(i, j, EXCLUSIVE);
 		}
 		
 		break;
 	case SHARED:
 		if (currentState == INVALID && operationType == READ)
 		{
-			int address = cache.get_address(blockIndex);
+			int address = cache.get_address(i,j);
 			for (auto& other_cache : caches)
 			{
-				if (other_cache->is_in_cache(address) && other_cache->get_state(other_cache->get_index(address)) != INVALID)
+				if (other_cache->is_in_cache(address) && other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) != INVALID)
 				{
-					other_cache->set_state(other_cache->get_index(address), SHARED);
-				} else if (other_cache->get_state(other_cache->get_index(address)) == MODIFIED )
+					other_cache->set_state(other_cache->get_index(address).first,other_cache->get_index(address).second, SHARED);
+				} else if (other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) == MODIFIED )
 				{
-					other_cache->write_memory(other_cache->get_index(address));
+					other_cache->write_memory(other_cache->get_index(address).first,other_cache->get_index(address).second);
 				}
 				
 			}
-			cache.set_state(blockIndex, SHARED);
+			cache.set_state(i, j, SHARED);
 		} 
 
 		break;
 	case INVALID:
-		cache.set_state(blockIndex, INVALID);
+		cache.set_state(i, j, INVALID);
 		break;
 	default:
         break;

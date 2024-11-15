@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <iostream>
 #include "Ram.h"
+#include <utility>  // Para std::pair
 
 // Enumeración para los estados MESI
 enum MESIState {
@@ -50,14 +51,12 @@ public:
 	~BusInterconnect();
 
 	// Metodos lectura y escritura
-	future<uint64_t> enqueueRead(Cache& cache, int blockIndex, int peId, int adderss);
-	void enqueueWrite(Cache& cache, int blockIndex, int peId, int address, uint64_t data);
+
 	void alwaysWriteOnMemory(int blockIndex, int peId, int address, uint64_t data);
 
-	void notifyOtherCaches(Cache& cache, int blockIndex);
+	void notifyOtherCaches(Cache& cache, int i, int j);
 
 	// Metodo para asignar mesi, hace referencia Cache& cache, primer parametro
-	void assignMESIState(Cache& cache, int blockIndex, MESIState newstate, OperationType operationType);
 	//void assignMESIState(Cache& cache, int blockIndex, MESIState newState, OperationType operationType);
 
 	// Registrar invalidacion
@@ -71,7 +70,15 @@ public:
 	uint64_t getDataTransmitted(int peId) const;
     void processRequests();
 	bool stopBus;
-	
+
+    future<uint64_t> enqueueRead(Cache &cache, int i, int j, int peId, int adderss);
+
+    void assignMESIState(Cache &cache, int i, int j, MESIState newState, OperationType operationType);
+
+    void enqueueWrite(Cache &cache, int i, int j, int peId, int adderss, uint64_t data);
+
+    void alwaysWriteOnMemory(int i, int j, int peId, int address, uint64_t data);
+
 private:
 	Ram& sharedMemory;
 	vector<Cache*>& caches;
@@ -92,7 +99,7 @@ private:
 
 	// Hilo del bus
 	thread busThread;
-	
+
 };
 
 #endif // !BUS_INTERCONNECT_H

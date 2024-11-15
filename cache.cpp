@@ -7,25 +7,26 @@ using namespace std;
 
 // Constructor de la clase Cache
 Cache::Cache(int cache_id, BusInterconnect& bus) : id(cache_id), bus(bus), miss_count(0), inv_count(0) {
-    // Inicializar todos los bloques de la caché
     for (int i = 0; i < 8; i++) {
-        valid[i] = false;
-        dirty[i] = false;
-        data[i] = 0;
-        addr[i] = 0;
-        first[i] = 0;
-        state[i] = INVALID;  // Asegúrate de inicializar el estado en INVALID
+        for (int j = 0; j < 4; j++) {
+            valid[i][j] = false;
+            dirty[i][j] = false;
+            data[i][j] = 0;
+            addr[i][j] = 0;
+            first[i][j] = 0;
+            state[i][j] = INVALID;
+        }
     }
 }
 
 // Método para obtener los datos de un bloque
-uint64_t Cache::get_data(int block_num) {
-    return data[block_num];
+uint64_t Cache::get_data(int row, int col) {
+    return data[row][col];
 }
 
 // Método para escribir un valor en un bloque
-void Cache::set_data(int block_num, int pos, uint64_t value) {
-    data[block_num] = value;
+void Cache::set_data(int row, int col, uint64_t value) {
+    data[row][col] = value;
 }
 
 // Método para escribir un valor en la caché
@@ -33,116 +34,129 @@ void Cache::write(uint8_t address, uint64_t value) {
     uint8_t tag = address;
 
     // Buscar si ya existe el bloque (para actualizar si hay cache hit)
-    for (int index = 0; index < 8; ++index) {
-        if (valid[index] && addr[index] == tag) { // Cache hit
-            if(state[index]==SHARED || state[index] ==INVALID){
-                bus.notifyOtherCaches(*this,index);
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (valid[i][j] && addr[i][j] == tag) { // Cache hit
+                if (state[i][j] == SHARED || state[i][j] == INVALID) {
+                    bus.notifyOtherCaches(*this, i, j); // Cambiado para la matriz 8x4
+                }
+                data[i][j] = value;
+                cout << "Cache hit (Cache " << id << ") Memoria( " << static_cast<unsigned int>(tag)
+                     << "): valor leído en el índice [" << i << ", " << j << "].\n";
+                return;
             }
-            data[index] = value;
-            cout << "Cache hit (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): valor leído en el índice [" << index << "].\n";
-            return;
         }
     }
 
     // Buscar un bloque inválido para escribir el valor (cache miss)
-    for (int index = 0; index < 8; ++index) {
-        if (!valid[index]) { // Encontrar un bloque inválido
-            // Escribir el valor en el bloque inválido
-            //data[index] = read_memory(tag);
-
-            //ocupo avisar que se realizo un write
-            bus.notifyOtherCaches(*this,index);
-            data[index] = value;
-            addr[index] = tag;
-            valid[index] = true;
-            dirty[index] = true;
-            miss_count++;
-            fifo_queue.push(index);  // Añadir el índice a la cola FIFO
-            cout << "Cache miss (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): dato escrito en el índice [" << index << "].\n";
-            return;
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (!valid[i][j]) { // Encontrar un bloque inválido
+                // Escribir el valor en el bloque inválido
+                bus.notifyOtherCaches(*this, i, j); // Cambiado para la matriz 8x4
+                data[i][j] = value;
+                addr[i][j] = tag;
+                valid[i][j] = true;
+                dirty[i][j] = true;
+                miss_count++;
+                fifo_queue.push({i, j});  // Añadir el índice a la cola FIFO como par {i, j}
+                cout << "Cache miss (Cache " << id << ") Memoria( " << static_cast<unsigned int>(tag)
+                     << "): dato escrito en el índice [" << i << ", " << j << "].\n";
+                return;
+            }
         }
     }
 
     // Si no hay bloques inválidos (cache llena), reemplazar un bloque (usamos FIFO)
-    int old_index = fifo_queue.front();  // Obtener el índice del bloque más antiguo
+    auto [old_i, old_j] = fifo_queue.front();  // Obtener el índice del bloque más antiguo como par {i, j}
     fifo_queue.pop();  // Eliminar el bloque de la cola FIFO
 
     // Si el bloque antiguo está "dirty", hacer write-back a memoria
-    if (state[old_index] == MODIFIED) {
-        cout << "Write-back (Cache " << id << "): escribiendo datos del índice [" << old_index << "] a memoria.\n";
-        Writeback(old_index);
+    if (state[old_i][old_j] == MODIFIED) {
+        cout << "Write-back (Cache " << id << "): escribiendo datos del índice [" << old_i << ", " << old_j << "] a memoria.\n";
+        Writeback(old_i, old_j);
     }
 
     // Incrementar el contador de invalidaciones si se está reemplazando un bloque válido
-    if (valid[old_index]) {
+    if (valid[old_i][old_j]) {
         inv_count++;
-        cout << "Invalidación (Cache " << id << "): bloque en el índice [" << old_index << "] invalidado.\n";
+        cout << "Invalidación (Cache " << id << "): bloque en el índice [" << old_i << ", " << old_j << "] invalidado.\n";
     }
 
     // Reemplazar el bloque con el nuevo valor
-    data[old_index] = value;
-    addr[old_index] = tag;
-    valid[old_index] = true;
-    dirty[old_index] = true;
-    fifo_queue.push(old_index);  // Agregar la nueva posición al final de la cola
-    bus.notifyOtherCaches(*this,old_index);
+    data[old_i][old_j] = value;
+    addr[old_i][old_j] = tag;
+    valid[old_i][old_j] = true;
+    dirty[old_i][old_j] = true;
+    fifo_queue.push({old_i, old_j});  // Agregar la nueva posición al final de la cola como par {i, j}
+    bus.notifyOtherCaches(*this, old_i, old_j);  // Cambiado para la matriz 8x4
 }
+
 
 // Método para leer un valor de la caché
 uint64_t Cache::read(uint8_t address) {
     uint8_t tag = address;
 
     // Buscar si ya existe el bloque (para un cache hit)
-    for (int index = 0; index < 8; ++index) {
-        if (valid[index] && addr[index] == tag) { // Cache hit
-            cout << "Cache hit (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): leyendo dato en el índice [" << index << "].\n";
-            if (state[index]!=EXCLUSIVE){
-                bus.assignMESIState(*this,index,SHARED,READ);
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (valid[i][j] && addr[i][j] == tag) { // Cache hit
+                cout << "Cache hit (Cache " << id << ") Memoria( " << static_cast<unsigned int>(tag)
+                     << "): leyendo dato en el índice [" << i << ", " << j << "].\n";
+                if (state[i][j] != EXCLUSIVE) {
+                    bus.assignMESIState(*this, i, j, SHARED, READ);  // Modificado para aceptar {i, j}
+                }
+                return data[i][j];
             }
-            return data[index];
         }
     }
 
     // Buscar un bloque inválido para cargar el valor desde memoria (cache miss)
-    for (int index = 0; index < 8; ++index) {
-        if (!valid[index]) { // Encontrar un bloque inválido
-            addr[index] = tag;
-            data[index] = read_memory(address); // Leer el valor de memoria
-            valid[index] = true;
-            first[index]++;
-            miss_count++;
-            fifo_queue.push(index);  // Añadir el índice a la cola FIFO
-            cout << "Cache miss (Cache " << id << ")Memoria( "<< static_cast<unsigned int>(tag) <<"): dato guardado en el indice [" << index << "].\n";
-            return data[index];
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (!valid[i][j]) { // Encontrar un bloque inválido
+                addr[i][j] = tag;
+                data[i][j] = read_memory(address);  // Leer el valor de memoria
+                valid[i][j] = true;
+                first[i][j]++;
+                miss_count++;
+                fifo_queue.push({i, j});  // Añadir el índice a la cola FIFO como par {i, j}
+                cout << "Cache miss (Cache " << id << ") Memoria( " << static_cast<unsigned int>(tag)
+                     << "): dato guardado en el índice [" << i << ", " << j << "].\n";
+                return data[i][j];
+            }
         }
     }
 
     // Si no hay bloques inválidos (cache llena), reemplazar un bloque (usamos FIFO)
-    int old_index = fifo_queue.front();  // Obtener el índice del bloque más antiguo
+    auto [old_i, old_j] = fifo_queue.front();  // Obtener el índice del bloque más antiguo como par {i, j}
     fifo_queue.pop();  // Eliminar el bloque de la cola FIFO
 
     // Si el bloque antiguo está "dirty", hacer write-back a memoria
-    if (state[old_index]==MODIFIED) {
-        cout << "Write-back (Cache " << id << "): escribiendo datos del indice [" << old_index << "] a memoria.\n";
-        Writeback(old_index);
+    if (state[old_i][old_j] == MODIFIED) {
+        cout << "Write-back (Cache " << id << "): escribiendo datos del índice [" << old_i << ", " << old_j << "] a memoria.\n";
+        Writeback(old_i, old_j);
     }
 
     // Incrementar el contador de invalidaciones si se está reemplazando un bloque válido
-    if (valid[old_index]) {
+    if (valid[old_i][old_j]) {
         inv_count++;
-        cout << "Invalidacion (Cache " << id << "): bloque en el indice [" << old_index << "] invalidado.\n";
+        cout << "Invalidación (Cache " << id << "): bloque en el índice [" << old_i << ", " << old_j << "] invalidado.\n";
     }
 
     // Reemplazar el bloque con el nuevo valor
-    data[old_index] = read_memory(address);  // Leer el nuevo valor de memoria
-    addr[old_index] = tag;
-    valid[old_index] = true;
-    dirty[old_index] = false;
-    fifo_queue.push(old_index);  // Agregar la nueva posición al final de la cola
-    // VEREFICAR SI EL NUEVO BLOQUE SI ESTA COMPARTIDO EN OTRA CACHE;
+    data[old_i][old_j] = read_memory(address);  // Leer el nuevo valor de memoria
+    addr[old_i][old_j] = tag;
+    valid[old_i][old_j] = true;
+    dirty[old_i][old_j] = false;
+    fifo_queue.push({old_i, old_j});  // Agregar la nueva posición al final de la cola como par {i, j}
 
-    return data[old_index];
+    // VERIFICAR SI EL NUEVO BLOQUE ESTÁ COMPARTIDO EN OTRA CACHE
+    // (Este proceso se debe implementar aquí si es necesario)
+
+    return data[old_i][old_j];
 }
+
 
 // Métodos de acceso a los contadores y el estado
 int Cache::get_id() const {
@@ -157,53 +171,58 @@ int Cache::get_invalidation_count() const {
     return inv_count;
 }
 
-MESIState Cache::get_state(int block_num) {
-    return state[block_num];
+MESIState Cache::get_state(int i, int j) {
+    return state[i][j];
 }
 
-void Cache::set_state(int block_num, MESIState mesiState) {
-    state[block_num] = mesiState;
+void Cache::set_state(int i, int j, MESIState mesiState) {
+    state[i][j] = mesiState;
 }
 
 // Métodos para interactuar con la memoria
 uint64_t Cache::read_memory(uint8_t address) {
-    future<uint64_t> load_data = bus.enqueueRead(*this, get_index(address), id, address);
+    future<uint64_t> load_data = bus.enqueueRead(*this, get_index(address).first, get_index(address).second, id, address);
     return load_data.get(); // Leer el valor de memoria
 }
 
-void Cache::write_memory(int block_num) {
-    bus.enqueueWrite(*this, block_num, id, addr[block_num], data[block_num]);
+void Cache::write_memory(int i,int j) {
+    bus.enqueueWrite(*this, i, j, id, addr[i][j], data[i][j]);
 }
 
-void Cache::Writeback(int block_num){
-    bus.alwaysWriteOnMemory(block_num, id, addr[block_num], data[block_num]);
+void Cache::Writeback(int i, int j){
+    bus.alwaysWriteOnMemory(i, j, id, addr[i][j], data[i][j]);
 }
 
 // Métodos de utilidad
-uint8_t Cache::get_address(int index) {
-    return addr[index];
+uint8_t Cache::get_address(int i, int j) {
+    return addr[i][j];
 }
 
-int Cache::get_index(uint8_t address) {
-    for (int index = 0; index < 8; ++index) {
-        if (addr[index] == address) { // Cache hit
-            cout << "Cache hit (Cache " << id << "): leyendo dato en el indice [" << index << "].\n";
-            return index;
+std::pair<int, int> Cache::get_index(uint8_t address) {
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (addr[i][j] == address) { // Cache hit
+                cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << i << ", " << j << "].\n";
+                return {i, j};
+            }
         }
     }
-    return -1;  // No encontrado
+    return {-1, -1};  // No encontrado
 }
 
 bool Cache::is_in_cache(uint8_t address) {
-    for (int index = 0; index < 8; ++index) {
-        if (addr[index] == address) { // Cache hit
-            cout << "Cache hit (Cache " << id << "): leyendo dato en el indice [" << index << "].\n";
-            return true;
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (addr[i][j] == address) { // Cache hit
+                cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << i << ", " << j << "].\n";
+                return true;
+            }
         }
     }
     return false;
 }
 
-int Cache::get_first(int index) {
-    return first[index];
+
+int Cache::get_first(int i,int j) {
+    return first[i][j];
 }
