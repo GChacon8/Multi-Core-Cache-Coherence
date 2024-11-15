@@ -138,6 +138,8 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 {
 	MESIState currentState = cache.get_state(i,j);
 
+    cout<<"el estado actual es: "<< currentState <<endl;
+
 	switch (newState)
 	{
 	case MODIFIED:
@@ -149,7 +151,8 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 				if (other_cache->is_in_cache(address))
 				{
 					other_cache->set_state(other_cache->get_index(address).first, other_cache->get_index(address).second,INVALID);
-				}
+                    cout<<"SE INVALIDARON LOS CACHES: "<<other_cache->get_id()<<endl;
+                }
 			}	
 			cache.set_state(i, j, MODIFIED);
 		} else if ((currentState == EXCLUSIVE || currentState == INVALID) && operationType == WRITE)
@@ -159,6 +162,9 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 		{
 			cache.set_state(i, j, MODIFIED);
 		}
+
+        cout<<"el nuevo estado es MODIFIED"<<endl;
+
 		break;
 
 	case EXCLUSIVE:
@@ -166,7 +172,7 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 		{
 			cache.set_state(i, j, EXCLUSIVE);
 		}
-		
+            cout<<"el nuevo estado es EXCLUSIVE"<<endl;
 		break;
 	case SHARED:
 		if (currentState == INVALID && operationType == READ)
@@ -177,18 +183,21 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 				if (other_cache->is_in_cache(address) && other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) != INVALID)
 				{
 					other_cache->set_state(other_cache->get_index(address).first,other_cache->get_index(address).second, SHARED);
+                    cout<<"PASARON A SHARED LOS CACHES: "<<other_cache->get_id()<<endl;
 				} else if (other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) == MODIFIED )
 				{
-					other_cache->write_memory(other_cache->get_index(address).first,other_cache->get_index(address).second);
+					other_cache->Writeback(other_cache->get_index(address).first,other_cache->get_index(address).second);
 				}
 				
 			}
 			cache.set_state(i, j, SHARED);
-		} 
+		}
+            cout<<"el nuevo estado es SHARED"<<endl;
 
 		break;
 	case INVALID:
 		cache.set_state(i, j, INVALID);
+        cout<<"el nuevo estado es INVALID"<<endl;
 		break;
 	default:
         break;

@@ -52,7 +52,6 @@ public:
 
 	// Metodos lectura y escritura
 
-	void alwaysWriteOnMemory(int blockIndex, int peId, int address, uint64_t data);
 
 	void notifyOtherCaches(Cache& cache, int i, int j);
 
