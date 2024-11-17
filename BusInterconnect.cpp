@@ -147,6 +147,9 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 			int address = cache.get_address(i,j);
 			for (auto& other_cache : caches)
 			{
+				if(other_cache == &cache) {
+					continue;
+				}
 				if (other_cache->is_in_cache(address))
 				{
 					other_cache->set_state(other_cache->get_index(address).first, other_cache->get_index(address).second,INVALID);
@@ -170,6 +173,18 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 		if (currentState == INVALID && operationType == READ)
 		{
 			cache.set_state(i, j, EXCLUSIVE);
+			for (auto& other_cache : caches) {
+				if(other_cache == &cache) {
+					continue;
+				}
+				if(other_cache->is_in_cache(cache.get_address(i, j))) {
+					cache.set_state(i, j, SHARED);
+					other_cache->set_state(i, j, SHARED);
+					break;
+				}
+			}
+
+
 		}
             cout<<"el nuevo estado es EXCLUSIVE"<<endl;
 		break;
@@ -179,6 +194,9 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 			int address = cache.get_address(i,j);
 			for (auto& other_cache : caches)
 			{
+				if(other_cache == &cache) {
+					continue;
+				}
 				if (other_cache->is_in_cache(address) && other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) != INVALID)
 				{
 					other_cache->set_state(other_cache->get_index(address).first,other_cache->get_index(address).second, SHARED);
