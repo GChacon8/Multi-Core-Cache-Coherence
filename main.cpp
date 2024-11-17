@@ -48,6 +48,7 @@ int main() {
         pe_thread1.join();
 
         bus_thread.join();
+        bus.stopBus = true;
 
         cout << "Invalidaciones:\t" << bus.getNumInvalidations() << endl;
         cout << "Read Requests:\t" << bus.getNumReadRequests() << endl;
