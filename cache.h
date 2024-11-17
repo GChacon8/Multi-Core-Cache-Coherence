@@ -59,6 +59,8 @@ public:
     void set_state(int i, int j, MESIState mesiState);
 
     int get_first(int i, int j);
+
+    void displayStats();
 };
 
 #endif // CACHE_H

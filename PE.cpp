@@ -1,6 +1,8 @@
 #include <iostream>
 #include <bitset>  // Librería para bitset
 #include <cstdint> // For uint64_t
+#include <unistd.h>
+
 #include "ROM.h"
 #include "BusInterconnect.h"
 #include <unordered_map>
@@ -15,6 +17,7 @@ private:
     unordered_map<string, int> label_map; // Mapea etiquetas a líneas en ROM
     int program_counter = 0; // Posición actual de la instrucción en ROM
     int prev_reg_num = 0;
+    // mutex PE_mutex;
     Rom rom;
     BusInterconnect& bus;
 
@@ -125,5 +128,4 @@ public:
     Cache get_cache(){
         return cache;
     }
-
 };

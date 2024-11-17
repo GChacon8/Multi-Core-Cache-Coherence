@@ -1,0 +1,3 @@
+"F:\Programa\CLion 2024.2.3\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\MultiCoreCacheCoherence.dir/objects.a
+"F:\Programa\CLion 2024.2.3\bin\mingw\bin\ar.exe" qc CMakeFiles\MultiCoreCacheCoherence.dir/objects.a @CMakeFiles\MultiCoreCacheCoherence.dir\objects1.rsp
+"F:\Programa\CLion 2024.2.3\bin\mingw\bin\g++.exe" -g -Wl,--whole-archive CMakeFiles\MultiCoreCacheCoherence.dir/objects.a -Wl,--no-whole-archive -o MultiCoreCacheCoherence.exe -Wl,--out-implib,libMultiCoreCacheCoherence.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\MultiCoreCacheCoherence.dir\linkLibs.rsp

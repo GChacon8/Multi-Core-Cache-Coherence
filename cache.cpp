@@ -226,3 +226,9 @@ bool Cache::is_in_cache(uint8_t address) {
 int Cache::get_first(int i,int j) {
     return first[i][j];
 }
+
+void Cache::displayStats() {
+    cout << "Datos de cache del PE" << id << ": " << endl;
+    cout << "Misses: " << miss_count << endl;
+    cout << "Invalidaciones: " << inv_count << endl;
+}

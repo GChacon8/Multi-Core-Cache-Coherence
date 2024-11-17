@@ -49,12 +49,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/cmake-build-debug",
-		"source" : "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence"
+		"build" : "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/cmake-build-debug",
+		"source" : "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 6
+		"minor" : 7
 	}
 }

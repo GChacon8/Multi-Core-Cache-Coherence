@@ -15,7 +15,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/addr2line.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/addr2line.exe"
 		},
 		{
 			"name" : "CMAKE_AR",
@@ -31,7 +31,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/ar.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/ar.exe"
 		},
 		{
 			"name" : "CMAKE_BUILD_TYPE",
@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/cmake-build-debug"
+			"value" : "f:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -79,7 +79,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "27"
+			"value" : "29"
 		},
 		{
 			"name" : "CMAKE_CACHE_PATCH_VERSION",
@@ -91,7 +91,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "8"
+			"value" : "6"
 		},
 		{
 			"name" : "CMAKE_COLOR_DIAGNOSTICS",
@@ -106,6 +106,22 @@
 			"value" : "ON"
 		},
 		{
+			"name" : "CMAKE_COLOR_MAKEFILE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "UNINITIALIZED",
+			"value" : ""
+		},
+		{
 			"name" : "CMAKE_COMMAND",
 			"properties" : 
 			[
@@ -115,7 +131,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/cmake/win/x64/bin/cmake.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/cmake/win/x64/bin/cmake.exe"
 		},
 		{
 			"name" : "CMAKE_CPACK_COMMAND",
@@ -127,7 +143,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/cmake/win/x64/bin/cpack.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/cmake/win/x64/bin/cpack.exe"
 		},
 		{
 			"name" : "CMAKE_CTEST_COMMAND",
@@ -139,7 +155,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/cmake/win/x64/bin/ctest.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/cmake/win/x64/bin/ctest.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER",
@@ -154,8 +170,8 @@
 					"value" : "CXX compiler"
 				}
 			],
-			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/g++.exe"
+			"type" : "STRING",
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/g++.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER_AR",
@@ -171,7 +187,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/gcc-ar.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/gcc-ar.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER_RANLIB",
@@ -187,7 +203,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/gcc-ranlib.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/gcc-ranlib.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_FLAGS",
@@ -298,8 +314,8 @@
 					"value" : "C compiler"
 				}
 			],
-			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/gcc.exe"
+			"type" : "STRING",
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/gcc.exe"
 		},
 		{
 			"name" : "CMAKE_C_COMPILER_AR",
@@ -315,7 +331,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/gcc-ar.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/gcc-ar.exe"
 		},
 		{
 			"name" : "CMAKE_C_COMPILER_RANLIB",
@@ -331,7 +347,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/gcc-ranlib.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/gcc-ranlib.exe"
 		},
 		{
 			"name" : "CMAKE_C_FLAGS",
@@ -443,7 +459,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/dlltool.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/dlltool.exe"
 		},
 		{
 			"name" : "CMAKE_EXECUTABLE_FORMAT",
@@ -538,22 +554,6 @@
 			"value" : ""
 		},
 		{
-			"name" : "CMAKE_EXPORT_COMPILE_COMMANDS",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Enable/Disable output of compile commands during generation."
-				}
-			],
-			"type" : "BOOL",
-			"value" : ""
-		},
-		{
 			"name" : "CMAKE_EXTRA_GENERATOR",
 			"properties" : 
 			[
@@ -575,7 +575,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -587,7 +587,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "Ninja"
+			"value" : "MinGW Makefiles"
 		},
 		{
 			"name" : "CMAKE_GENERATOR_INSTANCE",
@@ -647,7 +647,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence"
+			"value" : "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -659,7 +659,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Program Files (x86)/Multi_Core_Cache_Coherence"
+			"value" : "C:/Program Files (x86)/MultiCoreCacheCoherence"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -675,19 +675,23 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/ld.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/ld.exe"
 		},
 		{
 			"name" : "CMAKE_MAKE_PROGRAM",
 			"properties" : 
 			[
 				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
 					"name" : "HELPSTRING",
 					"value" : "make program"
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/ninja/win/x64/ninja.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/mingw32-make.exe"
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS",
@@ -783,7 +787,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/nm.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/nm.exe"
 		},
 		{
 			"name" : "CMAKE_NUMBER_OF_MAKEFILES",
@@ -811,7 +815,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/objcopy.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/objcopy.exe"
 		},
 		{
 			"name" : "CMAKE_OBJDUMP",
@@ -827,7 +831,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/objdump.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/objdump.exe"
 		},
 		{
 			"name" : "CMAKE_PLATFORM_INFO_INITIALIZED",
@@ -891,7 +895,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/ranlib.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/ranlib.exe"
 		},
 		{
 			"name" : "CMAKE_RC_COMPILER",
@@ -907,7 +911,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/windres.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/windres.exe"
 		},
 		{
 			"name" : "CMAKE_RC_COMPILER_WORKS",
@@ -1015,7 +1019,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/readelf.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/readelf.exe"
 		},
 		{
 			"name" : "CMAKE_ROOT",
@@ -1027,7 +1031,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/cmake/win/x64/share/cmake-3.27"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/cmake/win/x64/share/cmake-3.29"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1235,7 +1239,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2023.3.4/bin/mingw/bin/strip.exe"
+			"value" : "F:/Programa/CLion 2024.2.3/bin/mingw/bin/strip.exe"
 		},
 		{
 			"name" : "CMAKE_TAPI",
@@ -1279,7 +1283,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/cmake-build-debug"
+			"value" : "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/cmake-build-debug"
 		},
 		{
 			"name" : "MultiCoreCacheCoherence_IS_TOP_LEVEL",
@@ -1303,43 +1307,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence"
-		},
-		{
-			"name" : "Multi_Core_Cache_Coherence_BINARY_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/cmake-build-debug"
-		},
-		{
-			"name" : "Multi_Core_Cache_Coherence_IS_TOP_LEVEL",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "ON"
-		},
-		{
-			"name" : "Multi_Core_Cache_Coherence_SOURCE_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence"
+			"value" : "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence"
 		},
 		{
 			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",

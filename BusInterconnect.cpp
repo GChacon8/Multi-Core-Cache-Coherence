@@ -87,7 +87,6 @@ void BusInterconnect::processRequests()
 	int contador = 0;	
 	while (true)
 	{
-
 		sleep(1);
 		printf("%d\n", contador);
 		contador++;
@@ -220,3 +219,7 @@ int BusInterconnect::getNumReadResponses() const { return numReadResponses; }
 int BusInterconnect::getNumWriteRequests() const { return numWriteRequests; }
 
 int BusInterconnect::getNumWriteResponses() const{ return numWriteResponses; }
+
+uint64_t BusInterconnect::getDataTransmitted(int peId) const {
+	return dataTransmitted[peId];
+}
