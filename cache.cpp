@@ -40,6 +40,9 @@ void Cache::write(uint8_t address, uint64_t value) {
                 if (state[i][j] == SHARED || state[i][j] == INVALID) {
                     bus.notifyOtherCaches(*this, i, j); // Cambiado para la matriz 8x4
                 }
+                if(state[i][j] == EXCLUSIVE){
+                    state[i][j]=MODIFIED;
+                }
                 data[i][j] = value;
                 cout << "Cache hit (Cache " << id << ") Memoria( " << static_cast<unsigned int>(tag)
                      << "): valor leído en el índice [" << i << ", " << j << "].\n";
