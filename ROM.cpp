@@ -78,4 +78,8 @@ void Rom::branch(int i) {
     current_line=i;
 }
 
+int Rom::getRomSize() const {
+    return  instructions.size();
+}
+
 

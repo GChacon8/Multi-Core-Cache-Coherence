@@ -32,6 +32,7 @@ public:
     void reset() { current_line = 0; }
     std::unordered_map<std::string,int> get_label_map();
     void branch(int i);
+    int getRomSize() const;
 };
 
 #endif // ROM_H

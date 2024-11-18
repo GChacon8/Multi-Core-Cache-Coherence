@@ -12,13 +12,16 @@ using namespace std;
 #include <unistd.h>
 
 void pe_next(PE* core) {
+    cout<<"SE EJECUTA PRIMERO EL HILO DEL CORE"<<core->get_id()<<endl;
     int counter = 0;
+    int ROM_size = core->getMyRomSize();
     while (true) {
-        if(counter > 12) {
+        if(counter > ROM_size) {
+            printf("Termino el hilo en: %d\n", core->get_id());
+            fflush(stdout);
             break;
         }
-        sleep(0.1);
-        printf("PE next done\n");
+        sleep(0.5);
         core->next();
         counter++;
     }
@@ -35,18 +38,17 @@ int main() {
     BusInterconnect bus(ram, numPEs, caches);  // 4 es el número de PEs, por ejemplo
    
 
-
-    PE core0 = PE(0, "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt", bus);
-    PE core1 = PE(1, "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt", bus);
+    // C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt
+    // F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt
+    PE core0 = PE(0, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE0.txt", bus);
+    PE core1 = PE(1, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE1.txt", bus);
 
     caches.push_back(core0.get_cache());
     caches.push_back(core1.get_cache());
 
     caches.size();
 
-
     thread bus_thread(&BusInterconnect::processRequests, &bus);
-
 
     if (!stepper) {
         thread pe_thread0(pe_next, &core0);
@@ -55,8 +57,8 @@ int main() {
         pe_thread0.join();
         pe_thread1.join();
 
-        bus_thread.join();
         bus.stopBus = true;
+        bus_thread.join();
 
         cout << "Invalidaciones:\t" << bus.getNumInvalidations() << endl;
         cout << "Read Requests:\t" << bus.getNumReadRequests() << endl;
@@ -79,7 +81,7 @@ int main() {
         while(true) {
             bus.stopBus = false;
             system("cls");
-            cout << "Que quiere hacer?: " << endl;
+            cout << "Que quiere hacer?: ";
             cin >> input;
             if (input == 'b') {
                 bus.stopBus = true;
@@ -97,6 +99,7 @@ int main() {
                 cout << "Comando desconocido";
             }
         }
+
         bus_thread.join();
 
         cout << "Invalidaciones:\t" << bus.getNumInvalidations() << endl;

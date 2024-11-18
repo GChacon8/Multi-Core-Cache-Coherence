@@ -88,18 +88,13 @@ void BusInterconnect::processRequests()
 	while (true)
 	{
 		sleep(1);
-		printf("%d\n", contador);
 		contador++;
-
 		
 		unique_lock<mutex> lock(queue_mutex);
 		queue_cv.wait(lock, [this] { return !requestQueue.empty() || stopBus; });
-		printf("%s\n", stopBus ? "true" : "false");
 
-		
 		if (stopBus && requestQueue.empty())
 		{
-			printf("BREAK\n");
 			break;
 		}
 		
@@ -138,7 +133,7 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 	MESIState currentState = cache.get_state(i,j);
 
 
-    cout<<"el estado actual es: "<< currentState <<endl;
+    cout<<"el estado actual de PE"<< cache.get_id()<< " es " << currentState <<endl;
 
 	switch (newState)
 	{
@@ -148,14 +143,14 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 			int address = cache.get_address(i,j);
 			for (auto& other_cache : caches)
 			{
-				if(other_cache == &cache) {
-					continue;
+				if(other_cache->get_id() != cache.get_id()) {
+					if (other_cache->is_in_cache(address))
+					{
+						other_cache->set_state(other_cache->get_index(address).first, other_cache->get_index(address).second,INVALID);
+						numInvalidations++;
+						cout<<"SE INVALIDARON LOS CACHES: "<<other_cache->get_id()<<endl;
+					}
 				}
-				if (other_cache->is_in_cache(address))
-				{
-					other_cache->set_state(other_cache->get_index(address).first, other_cache->get_index(address).second,INVALID);
-                    cout<<"SE INVALIDARON LOS CACHES: "<<other_cache->get_id()<<endl;
-                }
 			}	
 			cache.set_state(i, j, MODIFIED);
 		} else if ((currentState == EXCLUSIVE || currentState == INVALID) && operationType == WRITE)
@@ -173,12 +168,16 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 	case EXCLUSIVE:
 		if (currentState == INVALID && operationType == READ)
 		{
+			int address = cache.get_address(i,j);
             cache.set_state(i, j, EXCLUSIVE);
             cout<<"el nuevo estado es EXCLUSIVE"<<endl;
 			for (auto& other_cache : caches) {
 				if(other_cache->get_id() != cache.get_id()) {
                     if (other_cache->is_in_cache(cache.get_address(i, j))) {
                         cache.set_state(i, j, SHARED);
+                    	if (other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) == MODIFIED) {
+                    		other_cache->Writeback(other_cache->get_index(address).first,other_cache->get_index(address).second);
+                    	}
                         other_cache->set_state(i, j, SHARED);
                         cout << "el nuevo estado es SHARED" << endl;
                         break;
@@ -195,18 +194,16 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 			int address = cache.get_address(i,j);
 			for (auto& other_cache : caches)
 			{
-				if(other_cache == &cache) {
-					continue;
+				if(other_cache->get_id() != cache.get_id()) {
+					if (other_cache->is_in_cache(address) && other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) != INVALID)
+					{
+						other_cache->set_state(other_cache->get_index(address).first,other_cache->get_index(address).second, SHARED);
+						cout<<"PASARON A SHARED LOS CACHES: "<<other_cache->get_id()<<endl;
+					} else if (other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) == MODIFIED )
+					{
+						other_cache->Writeback(other_cache->get_index(address).first,other_cache->get_index(address).second);
+					}
 				}
-				if (other_cache->is_in_cache(address) && other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) != INVALID)
-				{
-					other_cache->set_state(other_cache->get_index(address).first,other_cache->get_index(address).second, SHARED);
-                    cout<<"PASARON A SHARED LOS CACHES: "<<other_cache->get_id()<<endl;
-				} else if (other_cache->get_state(other_cache->get_index(address).first,other_cache->get_index(address).second) == MODIFIED )
-				{
-					other_cache->Writeback(other_cache->get_index(address).first,other_cache->get_index(address).second);
-				}
-				
 			}
 			cache.set_state(i, j, SHARED);
 		}

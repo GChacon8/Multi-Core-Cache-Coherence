@@ -128,4 +128,8 @@ public:
     Cache* get_cache(){
         return cache;
     }
+
+    int getMyRomSize() {
+        return rom.getRomSize();
+    }
 };

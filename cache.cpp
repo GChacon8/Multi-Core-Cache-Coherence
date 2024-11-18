@@ -56,12 +56,12 @@ void Cache::write(uint8_t address, uint64_t value) {
         for (int j = 0; j < 4; ++j) {
             if (!valid[i][j]) { // Encontrar un bloque inválido
                 // Escribir el valor en el bloque inválido
-                bus.notifyOtherCaches(*this, i, j); // Cambiado para la matriz 8x4
                 data[i][j] = value;
                 addr[i][j] = tag;
                 valid[i][j] = true;
                 dirty[i][j] = true;
                 miss_count++;
+                bus.notifyOtherCaches(*this, i, j); // Cambiado para la matriz 8x4
                 fifo_queue.push({i, j});  // Añadir el índice a la cola FIFO como par {i, j}
                 cout << "Cache miss (Cache " << id << ") Memoria( " << static_cast<unsigned int>(tag)
                      << "): dato escrito en el índice [" << i << ", " << j << "].\n";
