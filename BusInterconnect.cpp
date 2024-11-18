@@ -65,6 +65,8 @@ void BusInterconnect::enqueueWrite(Cache& cache, int i, int j,int peId, int adde
 
 void BusInterconnect::alwaysWriteOnMemory(int i, int j, int peId, int address, uint64_t data)
 {
+	// CAMBIAR A DEQUE, PARA QUE EL WRITE-BACK OCURRA DE PRIMERO SIEMPRE
+	// REVISAR LOS METODOS POP_FRONT y PUSH_FRONT
 	Request req;
 	req.peID = peId;
 	req.type = WRITE;
