@@ -34,10 +34,18 @@ int main() {
     vector<Cache*> caches;
     BusInterconnect bus(ram, numPEs, caches);  // 4 es el número de PEs, por ejemplo
    
-    thread bus_thread(&BusInterconnect::processRequests, &bus);
 
-    PE core0 = PE(0, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt", bus);
-    PE core1 = PE(1, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt", bus);
+
+    PE core0 = PE(0, "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt", bus);
+    PE core1 = PE(1, "C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt", bus);
+
+    caches.push_back(core0.get_cache());
+    caches.push_back(core1.get_cache());
+
+    caches.size();
+
+
+    thread bus_thread(&BusInterconnect::processRequests, &bus);
 
 
     if (!stepper) {
@@ -59,8 +67,8 @@ int main() {
             cout << "Datos transmitidos al PE " << i << ":\t" << bus.getDataTransmitted(i) << " bytes" << endl;
         }
 
-        core0.get_cache().displayStats();
-        core1.get_cache().displayStats();
+        core0.get_cache()->displayStats();
+        core1.get_cache()->displayStats();
 
         return 0;
 
@@ -78,8 +86,8 @@ int main() {
                 break;
             };
             if (input == 'i') {
-                core0.get_cache().displayStats();
-                core1.get_cache().displayStats();
+                //core0.get_cache()->displayStats();
+                //core1.get_cache()->displayStats();
             } else if (input == 'c') {
 
                 core0.next();
@@ -100,8 +108,8 @@ int main() {
             cout << "Datos transmitidos al PE " << i << ":\t" << bus.getDataTransmitted(i) << " bytes" << endl;
         }
 
-        core0.get_cache().displayStats();
-        core1.get_cache().displayStats();
+        core0.get_cache()->displayStats();
+        core1.get_cache()->displayStats();
 
         return 0;
     }

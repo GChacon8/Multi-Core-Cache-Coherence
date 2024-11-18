@@ -137,6 +137,7 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 {
 	MESIState currentState = cache.get_state(i,j);
 
+
     cout<<"el estado actual es: "<< currentState <<endl;
 
 	switch (newState)
@@ -172,22 +173,22 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 	case EXCLUSIVE:
 		if (currentState == INVALID && operationType == READ)
 		{
-			cache.set_state(i, j, EXCLUSIVE);
+            cache.set_state(i, j, EXCLUSIVE);
+            cout<<"el nuevo estado es EXCLUSIVE"<<endl;
 			for (auto& other_cache : caches) {
-				if(other_cache == &cache) {
-					continue;
-				}
-				if(other_cache->is_in_cache(cache.get_address(i, j))) {
-					cache.set_state(i, j, SHARED);
-					other_cache->set_state(i, j, SHARED);
-					break;
-				}
+				if(other_cache->get_id() != cache.get_id()) {
+                    if (other_cache->is_in_cache(cache.get_address(i, j))) {
+                        cache.set_state(i, j, SHARED);
+                        other_cache->set_state(i, j, SHARED);
+                        cout << "el nuevo estado es SHARED" << endl;
+                        break;
+                    }
+                }
 			}
 
-
 		}
-            cout<<"el nuevo estado es EXCLUSIVE"<<endl;
 		break;
+
 	case SHARED:
 		if (currentState == INVALID && operationType == READ)
 		{

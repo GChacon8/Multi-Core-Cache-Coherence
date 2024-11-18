@@ -13,7 +13,7 @@ private:
     // Atributos
     int id;
     uint64_t reg[4];
-    Cache cache;
+    Cache* cache;
     unordered_map<string, int> label_map; // Mapea etiquetas a líneas en ROM
     int program_counter = 0; // Posición actual de la instrucción en ROM
     int prev_reg_num = 0;
@@ -23,7 +23,7 @@ private:
 
 public:
     // Constructor
-    PE(int _id,const std::string& rom_filename, BusInterconnect& bus) : id(_id), cache(_id, bus),rom(rom_filename), bus(bus){
+    PE(int _id,const std::string& rom_filename, BusInterconnect& bus) : id(_id), cache(new Cache(_id,bus)),rom(rom_filename), bus(bus){
         label_map=rom.get_label_map();
         reg[0]=0;
         reg[1]=0;
@@ -38,7 +38,7 @@ public:
     }
 
     int get_cache_id(){
-        return cache.get_id();
+        return cache->get_id();
     };
 
     uint64_t get_reg(int reg_num) {
@@ -63,7 +63,7 @@ public:
 
     void WRITE(int reg_num, uint8_t address){
         if (reg_num >= 0 && reg_num < 4) {  // Verificar que reg_num está dentro de los límites
-            cache.write(address,reg[reg_num]); //escribe los valores en la cache
+            cache->write(address,reg[reg_num]); //escribe los valores en la cache
         } else {
             cout << "Error: índice de registro fuera de rango en READ.\n";
         }
@@ -71,7 +71,7 @@ public:
 
     void READ(int reg_num, uint8_t address){
         if (reg_num >= 0 && reg_num < 4) {  // Verificar que reg_num está dentro de los límites
-            reg[reg_num] = cache.read(address);  // Leer el valor de la caché y guardarlo en el registro
+            reg[reg_num] = cache->read(address);  // Leer el valor de la caché y guardarlo en el registro
         } else {
             cout << "Error: índice de registro fuera de rango en READ.\n";
         }
@@ -90,11 +90,11 @@ public:
         // Ejecutar la instrucción según el tipo
         if (instruction.inst == "LOAD") {
             // Cargar valor de la dirección en el registro correspondiente
-            reg[instruction.reg_num] = cache.read(instruction.addr);  // Asumiendo que cache.read() carga el valor de la memoria.
+            reg[instruction.reg_num] = cache->read(instruction.addr);  // Asumiendo que cache.read() carga el valor de la memoria.
             prev_reg_num = instruction.reg_num;
         } else if (instruction.inst == "STORE") {
             // Almacenar el valor del registro en la dirección indicada
-            cache.write(instruction.addr, reg[instruction.reg_num]);  // Suponiendo que cache.write() escribe en la memoria.
+            cache->write(instruction.addr, reg[instruction.reg_num]);  // Suponiendo que cache.write() escribe en la memoria.
             prev_reg_num = instruction.reg_num;
         } else if (instruction.inst == "INC") {
             // Incrementar el valor del registro
@@ -125,7 +125,7 @@ public:
         program_counter++;
     }
 
-    Cache get_cache(){
+    Cache* get_cache(){
         return cache;
     }
 };

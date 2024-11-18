@@ -205,7 +205,6 @@ std::pair<int, int> Cache::get_index(uint8_t address) {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 4; ++j) {
             if (addr[i][j] == address) { // Cache hit
-                cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << i << ", " << j << "].\n";
                 return {i, j};
             }
         }
@@ -217,7 +216,7 @@ bool Cache::is_in_cache(uint8_t address) {
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 4; ++j) {
             if (addr[i][j] == address) { // Cache hit
-                cout << "Cache hit (Cache " << id << "): leyendo dato en el índice [" << i << ", " << j << "].\n";
+                cout << "address "<< address <<" esta en Cache " << id << "): leyendo dato en el indice [" << i << ", " << j << "].\n";
                 return true;
             }
         }
