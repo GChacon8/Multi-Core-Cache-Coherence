@@ -34,7 +34,7 @@ future<uint64_t> BusInterconnect::enqueueRead(Cache& cache, int i, int j, int pe
 	future<uint64_t> fut = req.promise.get_future();
 	{
 		lock_guard<mutex> lock(queue_mutex);
-		requestQueue.push(move(req));
+		requestQueue.push_back(move(req));
 	}
 	queue_cv.notify_one();
     if(cache.get_first(i,j) == 0){
@@ -57,7 +57,7 @@ void BusInterconnect::enqueueWrite(Cache& cache, int i, int j,int peId, int adde
 
 	{
 		lock_guard<mutex> lock(queue_mutex);
-		requestQueue.push(move(req));
+		requestQueue.push_back(move(req));
 	}
 	assignMESIState(cache,i, j, MODIFIED, WRITE);
 	queue_cv.notify_one();
@@ -74,7 +74,7 @@ void BusInterconnect::alwaysWriteOnMemory(int i, int j, int peId, int address, u
 	req.data = data;
 	{
 		lock_guard<mutex> lock(queue_mutex);
-		requestQueue.push(move(req));
+		requestQueue.push_front(move(req));
 	}
 	queue_cv.notify_one();
 }
@@ -102,7 +102,7 @@ void BusInterconnect::processRequests()
 		
 		// Obtener la respuesta de la queue
 		Request req = move(requestQueue.front());
-		requestQueue.pop();
+		requestQueue.pop_front();
 		lock.unlock();
 
 		// Procesa la solicitud

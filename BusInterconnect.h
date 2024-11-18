@@ -78,7 +78,8 @@ public:
 
     void alwaysWriteOnMemory(int i, int j, int peId, int address, uint64_t data);
 
-	queue<Request> requestQueue;
+	deque<Request> requestQueue;
+	// queue<Request> requestQueue;
 
 private:
 	Ram& sharedMemory;
