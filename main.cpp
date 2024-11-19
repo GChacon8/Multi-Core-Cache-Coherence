@@ -28,7 +28,7 @@ void pe_next(PE* core) {
 }
 
 int main() {
-    int numPEs = 4;
+    int numPEs = 2;
     Ram ram;
     for (int i = 0; i < 256; i++) {
         ram.write_mem(i, 0);
@@ -49,31 +49,32 @@ int main() {
     // C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt
     // F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt
 
-    PE core0 = PE(0,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt", bus);
-    PE core1 = PE(1,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt", bus);
-    PE core2 = PE(2,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt", bus);
-    PE core3 = PE(3,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt", bus);
+    PE core0 = PE(0,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE0.txt", bus);
+    PE core1 = PE(1,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE1.txt", bus);
+    //PE core2 = PE(2,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM0.txt", bus);
+    //PE core3 = PE(3,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM1.txt", bus);
 
     caches.push_back(core0.get_cache());
     caches.push_back(core1.get_cache());
-    caches.push_back(core2.get_cache());
-    caches.push_back(core3.get_cache());
+    //caches.push_back(core2.get_cache());
+    //caches.push_back(core3.get_cache());
+
 
     thread bus_thread(BusInterconnect::processRequests, &bus);
 
     if(!stepper) {
         thread pe_thread0(pe_next, &core0);
         thread pe_thread1(pe_next, &core1);
-        thread pe_thread2(pe_next, &core2);
-        thread pe_thread3(pe_next, &core3);
+        //thread pe_thread2(pe_next, &core2);
+        //thread pe_thread3(pe_next, &core3);
 
-        while (!pe_thread0.joinable() && !pe_thread1.joinable() && !pe_thread2.joinable() && !pe_thread3.joinable()) {
+        while (!pe_thread0.joinable() && !pe_thread1.joinable() /*&& !pe_thread2.joinable() && !pe_thread3.joinable()*/) {
             continue;
         }
         pe_thread0.join();
         pe_thread1.join();
-        pe_thread2.join();
-        pe_thread3.join();
+        //pe_thread2.join();
+        //pe_thread3.join();
 
         bus.stopBus = true;
         this_thread::sleep_for(chrono::milliseconds(500));
@@ -89,8 +90,8 @@ int main() {
         }
         core0.get_cache()->displayStats();
         core1.get_cache()->displayStats();
-        core2.get_cache()->displayStats();
-        core3.get_cache()->displayStats();
+        //core2.get_cache()->displayStats();
+        //core3.get_cache()->displayStats();
 
         return 0;
 
@@ -108,14 +109,14 @@ int main() {
             } else if(user_selection == 'i') {
                 core0.get_cache()->displayStats();
                 core1.get_cache()->displayStats();
-                core2.get_cache()->displayStats();
-                core3.get_cache()->displayStats();
+                //core2.get_cache()->displayStats();
+                //core3.get_cache()->displayStats();
                 cout << "\n";
             } else if (user_selection == 'c') {
                 core0.next();
                 core1.next();
-                core2.next();
-                core3.next();
+                //core2.next();
+                //core3.next();
             } else {
                 cout << "Comando desconocido." << endl;
             }
@@ -133,8 +134,8 @@ int main() {
 
         core0.get_cache()->displayStats();
         core1.get_cache()->displayStats();
-        core2.get_cache()->displayStats();
-        core3.get_cache()->displayStats();
+        //core2.get_cache()->displayStats();
+        //core3.get_cache()->displayStats();
 
         return 0;
     }
