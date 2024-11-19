@@ -209,7 +209,7 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
 			}
 			cache.set_state(i, j, SHARED);
 		}
-            cout<<"el nuevo estado es SHARED"<<endl;
+            cout<<"el nuevo estado es SHARED*"<<endl;
 
 		break;
 	case INVALID:

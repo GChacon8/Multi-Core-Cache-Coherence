@@ -49,8 +49,8 @@ int main() {
     // C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROM.txt
     // F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM.txt
 
-    PE core0 = PE(0,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE0.txt", bus);
-    PE core1 = PE(1,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE1.txt", bus);
+    PE core0 = PE(0,"C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROMPE1.txt", bus);
+    PE core1 = PE(1,"C:/Users/joedu/OneDrive/Escritorio/Multi-Core-Cache-Coherence/ROMPE0.txt", bus);
     //PE core2 = PE(2,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM0.txt", bus);
     //PE core3 = PE(3,"F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROM1.txt", bus);
 
