@@ -6,7 +6,7 @@
 using namespace std;
 
 // Constructor de la clase Cache
-Cache::Cache(int cache_id, BusInterconnect& bus) : id(cache_id), bus(bus), miss_count(0), inv_count(0) {
+Cache::Cache(int cache_id, BusInterconnect& bus) : id(cache_id), bus(bus), miss_count(0), inv_count(0), hit_count(0) {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 4; j++) {
             valid[i][j] = false;
@@ -24,10 +24,7 @@ uint64_t Cache::get_data(int row, int col) {
     return data[row][col];
 }
 
-// Método para escribir un valor en un bloque
-void Cache::set_data(int row, int col, uint64_t value) {
-    data[row][col] = value;
-}
+
 
 // Método para escribir un valor en la caché
 void Cache::write(uint8_t address, uint64_t value) {
@@ -106,6 +103,7 @@ uint64_t Cache::read(uint8_t address) {
             if (valid[i][j] && addr[i][j] == tag) { // Cache hit
                 cout << "Cache hit (Cache " << id << ") Memoria( " << static_cast<unsigned int>(tag)
                      << "): leyendo dato en el índice [" << i << ", " << j << "].\n";
+                hit_count++;
                 if (state[i][j] != EXCLUSIVE) {
                     bus.assignMESIState(*this, i, j, SHARED, READ);  // Modificado para aceptar {i, j}
                 }
@@ -166,8 +164,9 @@ int Cache::get_id() const {
     return id;
 }
 
-int Cache::get_miss_count() const {
-    return miss_count;
+// Métodos de utilidad
+uint8_t Cache::get_address(int i, int j) {
+    return addr[i][j];
 }
 
 int Cache::get_invalidation_count() const {
@@ -178,7 +177,16 @@ MESIState Cache::get_state(int i, int j) {
     return state[i][j];
 }
 
+// Método para escribir un valor en un bloque
+void Cache::set_data(int row, int col, uint64_t value) {
+    data[row][col] = value;
+}
+
 void Cache::set_state(int i, int j, MESIState mesiState) {
+    Last_oldState = get_state(i,j);
+    Last_newState = mesiState;
+    Last_addr = get_address(i,j);
+
     state[i][j] = mesiState;
 }
 
@@ -196,10 +204,6 @@ void Cache::Writeback(int i, int j){
     bus.alwaysWriteOnMemory(i, j, id, addr[i][j], data[i][j]);
 }
 
-// Métodos de utilidad
-uint8_t Cache::get_address(int i, int j) {
-    return addr[i][j];
-}
 
 std::pair<int, int> Cache::get_index(uint8_t address) {
     for (int i = 0; i < 8; ++i) {
@@ -233,4 +237,33 @@ void Cache::displayStats() {
     cout << "Datos de cache del PE" << id << ": " << endl;
     cout << "Misses: " << miss_count << endl;
     cout << "Invalidaciones: " << inv_count << endl;
+}
+
+int Cache::getID(){
+    return id;
+}
+
+int Cache::get_miss_count(){
+    return miss_count;
+}
+
+int Cache::get_inv_count(){
+    return inv_count;
+}
+
+int Cache::get_hit_count(){
+    return hit_count;
+}
+
+
+uint8_t Cache::get_last_addr(){
+    return Last_addr;
+}
+
+MESIState Cache::get_last_oldState(){
+    return Last_oldState;
+}
+
+MESIState Cache::get_last_newState(){
+    return Last_newState;
 }

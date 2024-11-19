@@ -23,8 +23,13 @@ private:
     int first[8][4];                   // Indicador de la primera vez que se usa un bloque
     std::queue<std::pair<int, int>> fifo_queue;    // Cola FIFO para el reemplazo de bloques
     int miss_count;                 // Contador de fallos de caché
+    int hit_count;
     int inv_count;                  // Contador de invalidaciones
     BusInterconnect& bus;           // Referencia a la interconexión de bus
+
+    uint8_t Last_addr;
+    MESIState Last_oldState;
+    MESIState Last_newState;
 
 public:
     // Constructor
@@ -61,6 +66,24 @@ public:
     int get_first(int i, int j);
 
     void displayStats();
+
+    int getID();
+
+    int get_miss_count();
+
+    int get_inv_count();
+
+    int get_hit_count();
+
+    uint8_t get_last_addr();
+
+    MESIState get_last_oldState();
+
+    MESIState get_last_newState();
+
+
+    
+
 };
 
 #endif // CACHE_H

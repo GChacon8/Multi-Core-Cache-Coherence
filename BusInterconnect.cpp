@@ -133,8 +133,7 @@ void BusInterconnect::processRequests()
 void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newState, OperationType operationType)
 {
 	MESIState currentState = cache.get_state(i,j);
-
-
+	
     cout<<"el estado actual de PE"<< cache.get_id()<< " es " << currentState <<endl;
 
 	switch (newState)
@@ -220,6 +219,7 @@ void BusInterconnect::assignMESIState(Cache& cache, int i, int j, MESIState newS
         break;
 
 	}
+
 }
 
 void BusInterconnect::registerInvalidation(int peId)

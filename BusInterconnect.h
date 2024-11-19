@@ -19,7 +19,7 @@
 enum MESIState {
     MODIFIED,
     EXCLUSIVE,
-    SHARED,
+    SHARED,	
     INVALID
 };
 

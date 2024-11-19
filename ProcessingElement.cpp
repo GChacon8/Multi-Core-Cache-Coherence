@@ -39,7 +39,7 @@ void ProcessingElement::set_reg(int reg_num, uint64_t value)
     {
         reg[reg_num] = value;
     } else {
-        cout << "Error: índice de registro fuera de rango." endl;
+        cout << "Error: índice de registro fuera de rango." << endl;
     }
     
 }
@@ -60,7 +60,7 @@ void ProcessingElement::WRITE(int reg_num, uint8_t address)
     {
         cache.write(address, reg[reg_num]);
     } else {
-        cout << "Error: índice de registro fuera de rango en READ." endl;
+        cout << "Error: índice de registro fuera de rango en READ." << endl;
     }
     
 }
@@ -71,7 +71,7 @@ void ProcessingElement::READ(int reg_num, uint8_t address)
     {
         reg[reg_num] = cache.read(address);
     } else {
-        cout << "Error: índice de registro fuera de rango en READ." endl;
+        cout << "Error: índice de registro fuera de rango en READ." << endl;
     }
     
 }
