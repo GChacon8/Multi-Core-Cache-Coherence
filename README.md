@@ -41,6 +41,9 @@ Instrucciones para ubuntu
 
 ### Authors
 [Gabriel Chacon Alfaro](https://github.com/GChacon8)
+
 [Daniel Castro Elizondo](https://github.com/Dcastroe10)
+
 [Jose Eduardo Cruz Vargas](https://github.com/eduardocv30)
+
 [Marco Rivera Serrano](https://github.com/SlimeVRS)
