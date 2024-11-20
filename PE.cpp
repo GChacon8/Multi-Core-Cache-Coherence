@@ -83,7 +83,7 @@ public:
         // Obtener la siguiente instrucción de la ROM
         inst instruction = rom.get_instruction();  // Suponiendo que tienes acceso a un objeto ROM
 
-        qDebug()<<"Ejecutando instruccion: " << program_counter << " con la instruccion: " << instruction.inst;
+        cout<<"Ejecutando instruccion: " << program_counter << " con la instruccion: " << instruction.inst;
         // Si la instrucción es "END", terminamos
         if (instruction.inst == "END") {
             cout << "Fin del programa." << endl;

@@ -27,6 +27,7 @@ private:
     QTableWidget *table;
     QTableWidget *table2;
     QTableWidget *table3;
+    QTableWidget *table4;
     QLabel *welcomeLabel, *label0, *label1, *label2, *label3, *label4, *label5, *label6;
     QCheckBox *stepperCheckBox;
     QPushButton *nextButton;
@@ -68,12 +69,18 @@ public:
 
         // /home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROMPE1.txt
         // F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE1.txt
-
+        /*
         cores[0] = new PE(0, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE1.txt", *bus);
         cores[1] = new PE(1, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE0.txt", *bus);
         cores[2] = new PE(2, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE2.txt", *bus);
         cores[3] = new PE(3, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE3.txt", *bus);
-        
+        */
+
+        cores[0] = new PE(0, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.txt", *bus);
+        cores[1] = new PE(1, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.txt", *bus);
+        cores[2] = new PE(2, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.txt", *bus);
+        cores[3] = new PE(3, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROM.txt", *bus);
+
         caches.push_back(cores[0]->get_cache());
         caches.push_back(cores[1]->get_cache());
         caches.push_back(cores[2]->get_cache());
@@ -119,6 +126,18 @@ public:
         table3->setEditTriggers(QAbstractItemView::NoEditTriggers);
         connect(table3, &QTableWidget::cellChanged, table3, &QTableWidget::resizeColumnsToContents);
         table3->hide();
+
+        //Cache table
+        table4 = new QTableWidget(8, 19);
+        table4->setHorizontalHeaderLabels(QStringList() << "C0_B0" << "C0_B1" << "C0_B2" << "C0_B3" 
+                                               << "---" << "C1_B0" << "C1_B1" << "C1_B2" << "C1_B3" 
+                                               << "---"<< "C2_B0" << "C2_B1" << "C2_B2" << "C2_B3" 
+                                               << "---"<< "C3_B0" << "C3_B1" << "C3_B2" << "C3_B3");
+        table4->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        for (int i = 0; i < table4->columnCount(); ++i) {
+            table4->setColumnWidth(i, 80); // Cambia 100 por el valor que desees para el ancho
+        }
+        table4->hide();
 
         // Crear checkbox
         stepperCheckBox = new QCheckBox("Do you want to use the Stepper?", this);
@@ -174,6 +193,7 @@ public:
         table->show();
         table2->show();
         table3->show();
+        table4->show();
 
         if(stepper){
             buttonSteps->show();
@@ -284,10 +304,14 @@ public:
             table3->setItem(i, 0, new QTableWidgetItem("Cache" + QString::number(i)));
             table3->setItem(i, 1, new QTableWidgetItem(QString::number(cores[i]->get_cache()->get_last_addr())));
             table3->setItem(i, 2, new QTableWidgetItem(mesiStateToString(cores[i]->get_cache()->get_last_oldState())));
-            table3->setItem(i, 3, new QTableWidgetItem(mesiStateToString(cores[i]->get_cache()->get_last_newState())));
+            table3->setItem(i, 3, new QTableWidgetItem(mesiStateToString(cores[i]->get_cache()->get_last_newState())));           
 
 
-            
+            for (int m = 0; m < 8; m++){
+                for(int n = 0; n < 4; n++){
+                    table4->setItem(m, (i*5) + n, new QTableWidgetItem(mesiStateToString(cores[i]->get_cache()->get_state(m,n))));
+                }
+            }   
         
         }
     }
