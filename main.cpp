@@ -14,6 +14,8 @@
 #include <QtWidgets/QCheckBox>
 #include <QtCore/QTimer>
 #include <QDebug>
+#include <QThread>
+#include <QObject>
 #include "PE.cpp"
 #include "Ram.h"
 #include "ROM.h"
@@ -35,14 +37,14 @@ private:
     Ram ram;
     std::vector<Cache *> caches;
     BusInterconnect *bus;
-    PE *cores[2];
+    PE *cores[4];
     std::thread bus_thread;
     std::thread sim_thread;
     std::thread updateThread;
     
 
 public:
-    MainWindow(QWidget *parent = nullptr) : QWidget(parent), numPEs(2), ram() {
+    MainWindow(QWidget *parent = nullptr) : QWidget(parent), numPEs(4), ram() {
         // Inicializar componentes UI
         initUI();
 
@@ -64,15 +66,18 @@ public:
         }
         */
 
-        cores[0] = new PE(0, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROMPE1.txt", *bus);
-        cores[1] = new PE(1, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROMPE0.txt", *bus);
-        //cores[2] = new PE(2, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROMPE0.txt", *bus);
-        //cores[3] = new PE(3, "/home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROMPE0.txt", *bus);
+        // /home/dcastroe/Desktop/Arqui2/Multi-Core-Cache-Coherence/ROMPE1.txt
+        // F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE1.txt
+
+        cores[0] = new PE(0, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE1.txt", *bus);
+        cores[1] = new PE(1, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE0.txt", *bus);
+        cores[2] = new PE(2, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE2.txt", *bus);
+        cores[3] = new PE(3, "F:/Progras/Arqui II - Proyecto II/Multi-Core-Cache-Coherence/ROMPE3.txt", *bus);
         
         caches.push_back(cores[0]->get_cache());
         caches.push_back(cores[1]->get_cache());
-        //caches.push_back(cores[2]->get_cache());
-        //caches.push_back(cores[3]->get_cache());
+        caches.push_back(cores[2]->get_cache());
+        caches.push_back(cores[3]->get_cache());
 
     }
 
@@ -169,25 +174,33 @@ public:
         table->show();
         table2->show();
         table3->show();
+
         if(stepper){
             buttonSteps->show();
+        } else {
+            sim_thread = std::thread(&MainWindow::startSimulation, this);
         }
-        updateStats();
-
-        sim_thread = std::thread(&MainWindow::startSimulation, this);
+        updateStats();        
     }
 
     void onButtonStepsClicked(){
-        int ROM_size;
+        bool allFinished = true;
         int counter = 0;
         for (int i = 0; i < numPEs; i++){
-            ROM_size = cores[i]->getMyRomSize();
-            if(counter < ROM_size){
+            int ROM_size = cores[i]->getMyRomSize();
+            if(cores[i]->getExecutedInstructions() < ROM_size){
                 cores[i]->next();
+                allFinished = false;
                 qDebug()<<"Next Step Done";
+            } else {
+                qDebug()<<"PE" << i << " termino sus instrucciones";
             }
         }
-    
+        refreshTables();
+        if(allFinished) {
+            qDebug()<<"All PEs completed their instructions";
+            buttonSteps->setEnabled(false);
+        }
     }
 
     void startSimulation() {
@@ -274,9 +287,6 @@ public:
             table3->setItem(i, 3, new QTableWidgetItem(mesiStateToString(cores[i]->get_cache()->get_last_newState())));
 
 
-            //table3->setItem(i, 2, new QTableWidgetItem(QString::number(cores[i]->get_cache()->get_last_oldState())));
-            //table3->setItem(i, 3, new QTableWidgetItem(QString::number(cores[i]->get_cache()->get_last_newState())));
-
             
         
         }
@@ -285,7 +295,6 @@ public:
     void showResults() {
         qDebug() << "Resultados del bus:";
         qDebug() << "Invalidaciones:" << bus->getNumInvalidations();
-        // Agrega más estadísticas si es necesario
     }
 
 

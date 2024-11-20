@@ -21,9 +21,11 @@ private:
     Rom rom;
     BusInterconnect& bus;
 
+    int executedInstructions;
+
 public:
     // Constructor
-    PE(int _id,const std::string& rom_filename, BusInterconnect& bus) : id(_id), cache(new Cache(_id,bus)),rom(rom_filename), bus(bus){
+    PE(int _id,const std::string& rom_filename, BusInterconnect& bus) : id(_id), cache(new Cache(_id,bus)),rom(rom_filename), bus(bus), executedInstructions(0) {
         label_map=rom.get_label_map();
         reg[0]=0;
         reg[1]=0;
@@ -81,6 +83,7 @@ public:
         // Obtener la siguiente instrucción de la ROM
         inst instruction = rom.get_instruction();  // Suponiendo que tienes acceso a un objeto ROM
 
+        qDebug()<<"Ejecutando instruccion: " << program_counter << " con la instruccion: " << instruction.inst;
         // Si la instrucción es "END", terminamos
         if (instruction.inst == "END") {
             cout << "Fin del programa." << endl;
@@ -92,18 +95,22 @@ public:
             // Cargar valor de la dirección en el registro correspondiente
             reg[instruction.reg_num] = cache->read(instruction.addr);  // Asumiendo que cache.read() carga el valor de la memoria.
             prev_reg_num = instruction.reg_num;
+            executedInstructions++;
         } else if (instruction.inst == "STORE") {
             // Almacenar el valor del registro en la dirección indicada
             cache->write(instruction.addr, reg[instruction.reg_num]);  // Suponiendo que cache.write() escribe en la memoria.
             prev_reg_num = instruction.reg_num;
+            executedInstructions++;
         } else if (instruction.inst == "INC") {
             // Incrementar el valor del registro
             INC(instruction.reg_num);
             prev_reg_num = instruction.reg_num;
+            executedInstructions++;
         } else if (instruction.inst == "DEC") {
             // Decrementar el valor del registro
             DEC(instruction.reg_num);
             prev_reg_num = instruction.reg_num;
+            executedInstructions++;
         } else if (instruction.inst == "JNZ") {
             // Saltar si el registro no es cero
             if (reg[prev_reg_num] != 0) {
@@ -112,6 +119,7 @@ public:
                     program_counter = label_map[instruction.label];  // Actualizar el program_counter con la línea de la etiqueta
                     cout << "se realizo un salto a: " << program_counter << endl;
                     rom.branch(program_counter);
+                    executedInstructions++;
                     return;  // No se debe avanzar en el program_counter, ya que saltamos
                 } else {
                     cout << "Error: etiqueta no encontrada: " << instruction.inst << endl;
@@ -131,5 +139,9 @@ public:
 
     int getMyRomSize() {
         return rom.getRomSize();
+    }
+
+    int getExecutedInstructions() const {
+        return executedInstructions;
     }
 };
