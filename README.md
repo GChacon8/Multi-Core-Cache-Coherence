@@ -39,8 +39,6 @@ After downloading the repository, open the directory in a terminal an execute th
 qmake && make && ./MultiCoreCacheCoherence
 ```
 This will build and run the application
-### Ubuntu
-Instrucciones para ubuntu
 
 ### Authors
 [Gabriel Chacon Alfaro](https://github.com/GChacon8)
