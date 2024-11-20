@@ -56,14 +56,12 @@ SOURCES       = main.cpp \
 		cache.cpp \
 		Ram.cpp \
 		ROM.cpp \
-		BusInterconnect.cpp \
-		MESI.cpp 
+		BusInterconnect.cpp 
 OBJECTS       = main.o \
 		cache.o \
 		Ram.o \
 		ROM.o \
-		BusInterconnect.o \
-		MESI.o
+		BusInterconnect.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -148,8 +146,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		cache.cpp \
 		Ram.cpp \
 		ROM.cpp \
-		BusInterconnect.cpp \
-		MESI.cpp
+		BusInterconnect.cpp
 QMAKE_TARGET  = MultiCoreCacheCoherence
 DESTDIR       = 
 TARGET        = MultiCoreCacheCoherence
@@ -334,7 +331,7 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents cache.h Ram.h ROM.h BusInterconnect.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp cache.cpp Ram.cpp ROM.cpp BusInterconnect.cpp MESI.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp cache.cpp Ram.cpp ROM.cpp BusInterconnect.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -406,9 +403,6 @@ BusInterconnect.o: BusInterconnect.cpp BusInterconnect.h \
 		Ram.h \
 		cache.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o BusInterconnect.o BusInterconnect.cpp
-
-MESI.o: MESI.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MESI.o MESI.cpp
 
 ####### Install
 
