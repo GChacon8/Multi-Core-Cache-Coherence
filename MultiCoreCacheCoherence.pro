@@ -8,8 +8,7 @@ SOURCES += main.cpp \
            cache.cpp \
            Ram.cpp \
            ROM.cpp \
-           BusInterconnect.cpp \
-           MESI.cpp
+           BusInterconnect.cpp
 
 # Archivos de encabezado
 HEADERS += cache.h \
